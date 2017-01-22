@@ -1,3 +1,6 @@
+body{
+  background-color: black;
+}
 .container-fixed {
   bottom: 0;
   position: fixed;
@@ -6,6 +9,9 @@
   top: 0;
 }
 
+border-1px{
+  border:1px;
+}
 
 #resizable{
   border:solid;
@@ -15,11 +21,26 @@
   height: 200px;
   position:absolute;
   min-width:320px;
+  opacity:0.5;
+  background-color: black;
+  color:white;
 }
+
 .container-fixed .col {
   height: 100%;
   overflow: auto;
 }
+
+.player_state{
+  position: absolute;
+    left: 40%;
+    margin-top: 10px;
+    font-size: 50px;
+    color: yellow;
+    background-color: black;
+    padding: 10px;
+}
+
 
 .row-xs-12 { height: 100%; }
 .row-xs-11 { height: 91.66666666666666%; }
