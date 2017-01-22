@@ -203,3 +203,31 @@ function addGrid(pRow,pCol, youtubeid){
   }
 
 }
+
+var searchResult = [];
+
+function setGrid(pRow,pCol) {
+    row = pRow;
+    col = pCol;
+}
+
+function search(query) {
+	url = 'https://www.googleapis.com/youtube/v3/search';
+	var params = {
+		part: 'snippet',
+		key: 'AIzaSyDAKDaBy_JDwcScSHqDQimOOLjdPImLanc', // github gist에서 본 api_token 이라서 새로 하나 받아야 할 것 같아요.
+		q: query
+	};
+  
+	$.getJSON(url, params, function (query) {
+		searchResult = query.items
+		searchResult.forEach(function(entry) {
+		    console.log(entry.snippet.title); // 화면에 출력해보려고 했는데, codemirror에 output은 어떻게 하는지 잘 모르겠네요.
+		});
+	});
+}
+
+function selectFromResult(index) {
+	var videoId = searchResult[index].id.videoId
+	addGrid(row,col, videoId)
+}
