@@ -16,11 +16,11 @@ border-1px{
 #youtube-result{
   border:solid;
   width:30%;
-  bottom: 40%;
-  right: 40%;
-  height: 200px;
+  top:0px;
+  right: 0%;
+  height: 100%;
   position:absolute;
-  min-width:320px;
+  z-index:100;
   opacity:1;
   background-color: white;
   color:black;

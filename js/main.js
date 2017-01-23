@@ -269,7 +269,7 @@ function updateCodeMirror(data){
     var line = doc.getLine(cursor.line); // get the line contents
     var pos = { // create a new object to avoid mutation of the original selection
         line: cursor.line,
-        ch: line.length - 1 // set the character position to the end of the line
+        ch: cursor.ch // set the character position to the end of the line
     }
     doc.replaceRange(data, pos); // adds a new line
 }
