@@ -35,13 +35,38 @@ function phase(interval){
   }
 }
 
+function syncallt(time){
+    pauseall();
+    seekall(time);
+    playall();
+}
+
+function syncalli(index){
+    pauseall();
+    seekall(targetVideos[index].getCurrentTime());
+    playall();
+}
+
 function pauseall(){
   for (var i=0; i<targetVideos.length; i++){
     targetVideos[i].pauseVideo();
   }
 }
 
-function playall(){
+function playall(sync){
+
+  // check if all videos are in non-buffering state;
+  if(sync){
+    for (var i=0; i<targetVideos.length; i++){
+      if(targetVideos[i].getPlayerState() == 3){
+        setTimeout(function(){
+          playall();
+        },50);
+        return;
+      }
+    }
+  }
+
   for (var i=0; i<targetVideos.length; i++){
     targetVideos[i].playVideo();
   }
@@ -92,12 +117,13 @@ function re(num, phase){
 
 function ff(num, phase){
   if(phase){
-    (function(index){
-      setTimeout(function(){
-        targetVideos[index].seekTo(targetVideos[index].getCurrentTime() + num,true);
-      }, phase * index)
-    })(i);
-    return;
+    for(var i=0; i< targetVideos.length; i++){
+      (function(index){
+        setTimeout(function(){
+          targetVideos[index].seekTo(targetVideos[index].getCurrentTime() + num,true);
+        }, phase * index)
+      })(i);
+    }
   }
 
   for(var i=0; i< targetVideos.length; i++){
@@ -116,19 +142,20 @@ function onPlayerStateChange(event) {
   }
 }
 
+// run the function when the document is ready
 $(document).ready(function () {
   var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
         lineNumbers: false,
         styleActiveLine: true,
         matchBrackets: true
     });
-
+    // jquery ui
     $( "#resizable" ).resizable();
     $( "#resizable" ).draggable();
 
     var livecode = function(cm){
       var code = cm.getDoc().getSelection();
-      if(code.length > 0){
+      if(code.length > 0){ // when there is any selected text
         console.log(code);
         try {
             eval(code);
@@ -137,7 +164,7 @@ $(document).ready(function () {
                 alert(e.message);
             }
         }
-      }else{
+      }else{ // when there is no selectino, evaluate the line where the cursor is
         code = cm.getDoc().getLine(cm.getDoc().getCursor().line);
         console.log(code);
         try {
@@ -211,6 +238,10 @@ function setGrid(pRow,pCol) {
     col = pCol;
 }
 
+function setVideoId(text){
+  alert(text);
+}
+
 function search(query) {
 	url = 'https://www.googleapis.com/youtube/v3/search';
 	var params = {
@@ -218,14 +249,31 @@ function search(query) {
 		key: 'AIzaSyDAKDaBy_JDwcScSHqDQimOOLjdPImLanc', // github gist에서 본 api_token 이라서 새로 하나 받아야 할 것 같아요.
 		q: query
 	};
-  
+
 	$.getJSON(url, params, function (query) {
 		searchResult = query.items
 		searchResult.forEach(function(entry) {
 		    console.log(entry.snippet.title); // 화면에 출력해보려고 했는데, codemirror에 output은 어떻게 하는지 잘 모르겠네요.
+        $("#youtube-result").append(entry.snippet.title + ",<span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">" + entry.id.videoId + "</span><br>")
+        $("#yt-r-" +entry.id.videoId).click(function(){
+          updateCodeMirror(entry.id.videoId);
+        });
 		});
 	});
 }
+
+function updateCodeMirror(data){
+    var cm = $('.CodeMirror')[0].CodeMirror;
+    var doc = cm.getDoc();
+    var cursor = doc.getCursor(); // gets the line number in the cursor position
+    var line = doc.getLine(cursor.line); // get the line contents
+    var pos = { // create a new object to avoid mutation of the original selection
+        line: cursor.line,
+        ch: line.length - 1 // set the character position to the end of the line
+    }
+    doc.replaceRange(data, pos); // adds a new line
+}
+
 
 function selectFromResult(index) {
 	var videoId = searchResult[index].id.videoId

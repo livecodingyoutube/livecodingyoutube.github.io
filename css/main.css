@@ -13,6 +13,20 @@ border-1px{
   border:1px;
 }
 
+#youtube-result{
+  border:solid;
+  width:30%;
+  bottom: 40%;
+  right: 40%;
+  height: 200px;
+  position:absolute;
+  min-width:320px;
+  opacity:1;
+  background-color: white;
+  color:black;
+
+}
+
 #resizable{
   border:solid;
   width:30%;
