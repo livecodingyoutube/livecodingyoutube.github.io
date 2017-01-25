@@ -7,12 +7,22 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 var row = 4;
 var col = 4;
+var cellWidth = 50;
+var cellHeight = 50;
 var numReadyVideo = 0;
 var targetVideos = [];
 var initialLoading = true;
+var youtubeid = "";
+
+var YTSTATE_UNSTARTED = -1;
+var YTSTATE_ENDED = 0;
+var YTSTATE_PLAYING = 1;
+var YTSTATE_PAUSED = 2;
+var YTSTATE_BUFFERING = 3;
+var YTSTATE_VIDEOCUED = 5;
+
 function onYouTubeIframeAPIReady() {
   console.log("is ready");
-
 }
 
 function phase(interval){
@@ -22,16 +32,19 @@ function phase(interval){
     interval = -interval;
   }
   var index;
-  for (var i=0; i<targetVideos.length; i++){
-    index = i;
-    if(sign<0) index= targetVideos.length-1-i;
-    targetVideos[index].pauseVideo();
+  for (var i=1; i<targetVideos.length; i++){
+    index = i,adjustedI = i;
+    if(sign<0) {
+      adjustedI--;
+      index= targetVideos.length-1-adjustedI;
+    }
+    targetVideos[adjustedI].pauseVideo();
     (function(vindex,interval_order){
       console.log("vindex",vindex, ",interval_order", interval_order);
         setTimeout(function(){
         targetVideos[vindex].playVideo();
       },interval_order*interval);
-    })(i,index)
+    })(adjustedI,index)
   }
 }
 
@@ -54,7 +67,6 @@ function pauseall(){
 }
 
 function playall(sync){
-
   // check if all videos are in non-buffering state;
   if(sync){
     for (var i=0; i<targetVideos.length; i++){
@@ -79,9 +91,9 @@ function seekall(num){
 }
 
 function onPlayerReady(event) {
-  targetVideos.push(  event.target);
-  event.target.playVideo();
-
+  targetVideos.push(event.target);
+  event.target.mute()
+  event.target.seekTo(0);
 }
 
 // 5. The API calls this function when the player's state changes.
@@ -133,9 +145,12 @@ function ff(num, phase){
 
 function onPlayerStateChange(event) {
   $("#state-" + event.target.h.id).text(parseYTState(event.data));
-  if(initialLoading && event.data == 1){
+  if(initialLoading && event.data == YTSTATE_PLAYING){
     numReadyVideo++;
     event.target.pauseVideo();
+    event.target.seekTo(0);
+    event.target.unMute()
+  //  addVideo(numReadyVideo);
   }
   if(numReadyVideo == row * col){
     initialLoading = false;
@@ -163,6 +178,7 @@ $(document).ready(function () {
             if (e instanceof SyntaxError) {
                 alert(e.message);
             }
+            console.error(e);
         }
       }else{ // when there is no selectino, evaluate the line where the cursor is
         code = cm.getDoc().getLine(cm.getDoc().getCursor().line);
@@ -173,6 +189,7 @@ $(document).ready(function () {
             if (e instanceof SyntaxError) {
                 alert(e.message);
             }
+            console.error(e);
         }
       }
     };
@@ -180,7 +197,8 @@ $(document).ready(function () {
     editor.addKeyMap(map);
 });
 
-function addGrid(pRow,pCol, youtubeid){
+function addGrid(pRow,pCol,id ){
+  youtubeid = id;
   initialLoading = true;
   $("#youtubegrid").empty();
   $("#youtubegrid-state").empty();
@@ -214,23 +232,28 @@ function addGrid(pRow,pCol, youtubeid){
     $("#youtubegrid-state").append(ddiv_state);
   }
 
-  for (i=0; i<row; i++){
-    for  (j=0; j<col; j++){
-     var player = new YT.Player("cell-"+(i * row + j), {
-        height: ddiv.height(),
-        width:  dcol.width(),
-        videoId: youtubeid,
-        events: {
-          'onReady': onPlayerReady,
-          'onStateChange': onPlayerStateChange
-        },
-        suggestedQuality:"small"
-      });
+  cellWidth = ddiv.height();
+  cellHeight = dcol.width();
+
+  for ( i=0; i< row; i++){
+    for ( j=0 ; j<col; j++){
+      addVideo(i * row + j);
     }
   }
-
 }
 
+function addVideo(index){
+  var player = new YT.Player("cell-"+(index), {
+     height: cellWidth,
+     width:  cellHeight,
+     videoId: youtubeid,
+     events: {
+       'onReady': onPlayerReady,
+       'onStateChange': onPlayerStateChange
+     },
+     suggestedQuality:"small"
+  });
+}
 var searchResult = [];
 
 function setGrid(pRow,pCol) {
