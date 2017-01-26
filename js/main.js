@@ -207,6 +207,8 @@ $(document).ready(function () {
 	eval(jsCode)
 	
     editor.addKeyMap(map);
+	
+	$("#youtube-result").hide();
 });
 
 function addGrid(pRow,pCol,id ){
@@ -278,6 +280,8 @@ function setVideoId(text){
 }
 
 function search(query) {
+	$("#youtube-result").show();
+	
 	url = 'https://www.googleapis.com/youtube/v3/search';
 	var params = {
 		part: 'snippet',
@@ -289,7 +293,14 @@ function search(query) {
 		searchResult = query.items
 		searchResult.forEach(function(entry) {
 		    console.log(entry.snippet.title); // 화면에 출력해보려고 했는데, codemirror에 output은 어떻게 하는지 잘 모르겠네요.
-        $("#youtube-result").append(entry.snippet.title + ",<span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">" + entry.id.videoId + "</span><br>")
+			
+			title = entry.snippet.title;  
+			thumburl =  entry.snippet.thumbnails.default.url;                 
+			thumbimg = '<pre><img class="thumb" src="'+thumburl+'"></pre>';                   
+
+			$('#youtube-result').append('<span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">' + thumbimg + title + '</span>');
+						
+        // $("#youtube-result").append(entry.snippet.title + ",<span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">" + entry.id.videoId + "</span><br>")
         $("#yt-r-" +entry.id.videoId).click(function(){
           updateCodeMirror(entry.id.videoId);
         });
@@ -314,4 +325,6 @@ function selectFromResult(index) {
 	var videoId = searchResult[index-1].id.videoId;
 	updateCodeMirror(videoId);
 	// addGrid(row,col, videoId)
+	
+	$("#youtube-result").hide();
 }
