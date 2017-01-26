@@ -177,6 +177,18 @@ $(document).ready(function () {
       }
     };
     var map = {"Shift-Enter": livecode};
+	
+	// for (i = 1; i <= 5; i++) {
+	//     map["Ctrl-" + i] = function(cm) {
+	//     	selectFromResult(i)
+	//     }
+	// }
+	var jsCode = ""
+	for (i = 1; i <= 5; i++) {
+		jsCode += "map[\"Ctrl-\" + "+i+"] = function(cm) { selectFromResult("+i+") };\n";
+	}
+	eval(jsCode)
+	
     editor.addKeyMap(map);
 });
 
@@ -276,6 +288,7 @@ function updateCodeMirror(data){
 
 
 function selectFromResult(index) {
-	var videoId = searchResult[index].id.videoId
-	addGrid(row,col, videoId)
+	var videoId = searchResult[index-1].id.videoId;
+	updateCodeMirror(videoId);
+	// addGrid(row,col, videoId)
 }
