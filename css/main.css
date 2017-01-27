@@ -35,7 +35,7 @@ border-1px{
   height: 200px;
   position:absolute;
   min-width:320px;
-  opacity:0.5;
+  opacity:0.9;
   background-color: black;
   color:white;
 }
@@ -54,7 +54,14 @@ border-1px{
     background-color: black;
     padding: 10px;
 }
+.div_state{
+  border: solid 2px yellow;
+  height:100%;
+}
 
+.yt-cell{
+  border: solid 2px yellow;
+}
 
 .row-xs-12 { height: 100%; }
 .row-xs-11 { height: 91.66666666666666%; }

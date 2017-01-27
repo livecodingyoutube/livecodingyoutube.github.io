@@ -51,24 +51,37 @@
 
         <textarea id="code" name="code">
 // press shift+enter to run each line.
+// press shift+enter to run each line.
 
 setGrid(1,2)
-search("McFerrin Got Feeling")
+search("Sang Won Lee aural Cavity")
 selectFromResult(0)
+clearInterval(handle)
+handle = setInterval(function(){
+	jump(-1.5)
+},1500)
+phase(-200)
 
-addGrid(2,2,"6auwxRuFjZk")
-addGrid(2,2,"FGBhQbmPwH8")
-addGrid(2,2,"gYS-kLcH5ak")
+playall()
+
+
+createGrid(4,4,"5y88CkstcWc")
+createGrid(2,2,"FGBhQbmPwH8")
+createGrid(2,2,"ml6o40s9R-A")
+addGrid(1,1,"FGBhQbmPwH8")
+
 syncallt(30)
 seekall(44)
 phase(100)
 playall()
-re(2,1000)
-ff(2,1000)
+jump(2,1000)
+jump(-2,1000)
 syncalli(1)
 pauseall()
-re(1.2,1900)
+loop(0,1,0.4)
+
 ff(1)
+
       </textarea>
 
     </div>

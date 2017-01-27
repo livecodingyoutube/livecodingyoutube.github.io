@@ -1,10 +1,12 @@
 
+var DEBUG = false;
+var markTimestamp = -1;
 var tag = document.createElement('script');
-
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+var loopHandles = [];
+var jumpTimestamp = 0;
 var row = 4;
 var col = 4;
 var cellWidth = 50;
@@ -13,6 +15,8 @@ var numReadyVideo = 0;
 var targetVideos = [];
 var initialLoading = true;
 var youtubeid = "";
+var divGrid = [];
+var gridVideos = [];
 
 var YTSTATE_UNSTARTED = -1;
 var YTSTATE_ENDED = 0;
@@ -22,30 +26,33 @@ var YTSTATE_BUFFERING = 3;
 var YTSTATE_VIDEOCUED = 5;
 
 function onYouTubeIframeAPIReady() {
-  console.log("is ready");
+  if(DEBUG)console.log("is ready");
 }
 
 function phase(interval){
-  var sign = 1;
-  if(interval<0){
-    sign = -1;
-    interval = -interval;
-  }
-  var index;
-  for (var i=1; i<targetVideos.length; i++){
-    index = i,adjustedI = i;
-    if(sign<0) {
-      adjustedI--;
-      index= targetVideos.length-1-adjustedI;
+  if(interval>=0){
+    for (var i=1; i<targetVideos.length; i++){
+      (function(vindex){
+        if(DEBUG)console.log("vindex",vindex, ",interval_order", interval_order);
+          setTimeout(function(){
+          targetVideos[vindex].playVideo();
+        },vindex*interval);
+      })(i)
+      targetVideos[i].pauseVideo(); // do not need to
     }
-    targetVideos[adjustedI].pauseVideo();
-    (function(vindex,interval_order){
-      console.log("vindex",vindex, ",interval_order", interval_order);
+    return ;
+  }
+ // interval < 0
+  for (var i=targetVideos.length-2; i>=0; i--){
+    (function(vindex){
+        if(DEBUG)console.log("vindex",vindex, ",interval_order", interval_order);
         setTimeout(function(){
         targetVideos[vindex].playVideo();
-      },interval_order*interval);
-    })(adjustedI,index)
+      },(targetVideos.length - vindex-1)*-interval);
+    })(i)
+    targetVideos[i].pauseVideo();
   }
+
 }
 
 function syncallt(time){
@@ -66,13 +73,17 @@ function pauseall(){
   }
 }
 
+function pause(index){
+  targetVideos[index].pauseVideo();
+}
+
 function playall(sync){
   // check if all videos are in non-buffering state;
   if(sync){
     for (var i=0; i<targetVideos.length; i++){
       if(targetVideos[i].getPlayerState() == 3){
         setTimeout(function(){
-          playall();
+          playall(sync);
         },50);
         return;
       }
@@ -91,7 +102,10 @@ function seekall(num){
 }
 
 function onPlayerReady(event) {
-  targetVideos.push(event.target);
+  var i = parseInt(event.target.getIframe().id.substr(5,1))
+  var j = parseInt(event.target.getIframe().id.substr(7,1))
+  if(!gridVideos[i]) gridVideos[i] = [];
+  gridVideos[i][j] = event.target;
   event.target.mute()
   event.target.seekTo(0);
 }
@@ -111,40 +125,84 @@ function parseYTState(num){
   return "unknown";
 }
 
-function re(num, phase){
-  if(phase){
-    for(var i=0; i< targetVideos.length; i++){
-      (function(index){
-        setTimeout(function(){
-          targetVideos[index].seekTo(targetVideos[index].getCurrentTime() - num,true);
-        }, phase * index)
-      })(i);
-    }
+function setMark(){
+  markTimestamp = (new Date()).getTime();
+}
+
+function unloop(index){
+  if(index){
+    clearInterval(loopHandles[index]);
+    loopHandles[index] = null;
     return;
   }
-  for(var i=0; i< targetVideos.length; i++){
-    targetVideos[i].seekTo(targetVideos[i].getCurrentTime() - num,true);
+  loopHandles.forEach(function(item){
+    clearInterval(item);
+  });
+  loopHandles = [];
+}
+
+function loop(index,back,interval, phase){
+  var goToTime = targetVideos[index].getCurrentTime() - back;
+  targetVideos[index].seekTo(goToTime)
+  var handle = setInterval(function(){
+    targetVideos[index].seekTo(goToTime)
+  },interval * 1000);
+  if(loopHandles[index]){
+    clearInterval(loopHandles[index]);
+  }
+  loopHandles[index] = handle;
+}
+
+function loopall(back, interval, phase){
+  var now = (new Date()).getTime();
+  if(!back){
+    if(markTimestamp < 0){
+      alert("set the marker first");
+    }
+    back = now - markTimestamp;
+  }
+  if(!interval) interval = back;
+  for (var i=0; i<targetVideos.length; i++){
+    loop(i,back,interval)
   }
 }
 
-function ff(num, phase){
+function jump(i,num){
+  jumpTimestamp = (new Date()).getTime();
+  console.log("timeStamp:",jumpTimestamp, " i:", i);
+  targetVideos[i].seekTo(targetVideos[i].getCurrentTime() + num,true);
+}
+
+function jumpall(num, phase){
+
   if(phase){
-    for(var i=0; i< targetVideos.length; i++){
+    for(var i=1; i< targetVideos.length; i++){
+      var now = (new Date()).getTime();
       (function(index){
         setTimeout(function(){
-          targetVideos[index].seekTo(targetVideos[index].getCurrentTime() + num,true);
+          console.log("time taken: ", ((new Date()).getTime() - now));
+          console.log("phase * index ", phase * index);
+          jump(index,num)
         }, phase * index)
       })(i);
     }
+    jump(0,num)
+    return;
   }
 
   for(var i=0; i< targetVideos.length; i++){
-    targetVideos[i].seekTo(targetVideos[i].getCurrentTime() + num,true);
+    jump(i,num)
   }
 }
 
+
+
 function onPlayerStateChange(event) {
-  $("#state-" + event.target.h.id).text(parseYTState(event.data));
+  var now = (new Date()).getTime();
+  if(DEBUG)$("#state-" + event.target.h.id).text(parseYTState(event.data));
+  if(DEBUG&&event.data == YTSTATE_PLAYING){
+    console.log("now - jumpTimestamp:", (now - jumpTimestamp));
+  }
   if(initialLoading && event.data == YTSTATE_PLAYING){
     numReadyVideo++;
     event.target.pauseVideo();
@@ -152,8 +210,13 @@ function onPlayerStateChange(event) {
     event.target.unMute()
   //  addVideo(numReadyVideo);
   }
-  if(numReadyVideo == row * col){
+  if(numReadyVideo == numLoadingVideo){
     initialLoading = false;
+    targetVideos = [];
+    for(var i = 0; i < gridVideos.length; i++)
+    {
+      targetVideos = targetVideos.concat(gridVideos[i]);
+    }
   }
 }
 
@@ -171,7 +234,7 @@ $(document).ready(function () {
     var livecode = function(cm){
       var code = cm.getDoc().getSelection();
       if(code.length > 0){ // when there is any selected text
-        console.log(code);
+        if(DEBUG)console.log(code);
         try {
             eval(code);
         } catch (e) {
@@ -182,7 +245,7 @@ $(document).ready(function () {
         }
       }else{ // when there is no selectino, evaluate the line where the cursor is
         code = cm.getDoc().getLine(cm.getDoc().getCursor().line);
-        console.log(code);
+        if(DEBUG)console.log(code);
         try {
             eval(code);
         } catch (e) {
@@ -197,55 +260,141 @@ $(document).ready(function () {
     editor.addKeyMap(map);
 });
 
-function addGrid(pRow,pCol,id ){
-  youtubeid = id;
+function addGrid(addRow,addCol,id){
   initialLoading = true;
-  $("#youtubegrid").empty();
-  $("#youtubegrid-state").empty();
-  numReadyVideo = 0;
-  row = pRow;
-  col = pCol;
-  targetVideos = [];
-  if(12%row!=0 || 12%col!=0){
-    alert("we can only take a divisor of 12.");
+
+  var row = divGrid.length + addRow;
+  var col = addCol;
+  if(divGrid[0])
+    col +=  divGrid[0].length;
+
+  if(id)
+    youtubeid = id;
+
+  if(row <0 || col < 0){
+    alert("Row col value negatives.!");
+    return;
   }
 
   var rowHeight = 12/row;
   var colWidth = 12/col;
-  var divrowhtml = '<div class="border-1px row-xs-'+rowHeight+'">'
-  var divcolhtml = '<div class = "border-1px col-sm-'+colWidth+' col-md-'+colWidth+' col-lg-'+colWidth+' col-xs-'+colWidth+'"></div>'
+
+  if(12%row!=0 || 12%col!=0){
+    alert("we can only take a divisor of 12.");
+    return;
+  }
+
+  var divrowclass = 'row-xs-'+rowHeight;
+  var divcolclass = 'yt-cell col-sm-'+colWidth+' col-md-'+colWidth+' col-lg-'+colWidth+' col-xs-'+colWidth;
+
+  var divrowhtml = '<div class='+divrowclass+'">'
+  var divcolhtml = '<div class = "'+divcolclass+'"></div>'
+  // let's resize the existing divs in grid.
+  for (var i=0; i < divGrid.length; i++){
+    divRowGrid[i].removeClass();
+    divRowGrid[i].addClass(divrowclass);
+    for (var j=0; j< divGrid[0].length; j++){
+      $("#" + divGrid[i][j]).removeClass();
+      $("#" + divGrid[i][j]).addClass(divcolclass);
+      $("#" + divGrid[i][j]).attr('width',($("#" + divGrid[i][j]).attr('width') * divGrid[0].length / col));
+      $("#" + divGrid[i][j]).attr('height',($("#" + divGrid[i][j]).attr('height') * divGrid.length / row));
+    }
+  }
+  // let's add the videos
+  cellWidth = $("#" + divGrid[0][0]).attr('width');
+  cellHeight = $("#" + divGrid[0][0]).attr('height');
+
+  // add cols first
+  for (var i=0; i <divGrid.length; i++){
+    if(!divGrid[0])
+      divGrid = [];
+    for (var j= divGrid[0].length; j< col; j++){
+      numLoadingVideo++;
+      var dcol = $(divcolhtml);
+      dcol.attr("id","cell-"+ i +"-"+ j);
+      divRowGrid[i].append(dcol)
+      if(id)addVideo(i,j);
+    }
+  }
+
+  // add rows first
+  for (var i=divGrid.length; i <row; i++){
+    var ddiv = $(divrowhtml);
+    var ddiv_state = $(divrowhtml);
+    divGrid[i] = [];
+    $("#youtubegrid").append(ddiv);
+
+    for (var j= 0; j< col; j++){
+      numLoadingVideo++;
+      var dcol = $(divcolhtml);
+      dcol.attr("id","cell-"+ i +"-"+ j);
+      ddiv.append(dcol)
+      divGrid[i][j] = "cell-"+ i +"-"+ j;
+      if(id)addVideo(i,j);
+    }
+    divRowGrid[i] = ddiv;
+  }
+}
+
+function createGrid(row,col,id){
+  youtubeid = id;
+  initialLoading = true;
+  divGrid  = [];
+  divRowGrid  = [];
+  unloop();
+  $("#youtubegrid").empty();
+  $("#youtubegrid-state").empty();
+  numReadyVideo = 0;
+  targetVideos = [];
+  if(12%row!=0 || 12%col!=0){
+    alert("we can only take a divisor of 12.");
+    return;
+  }
+  numLoadingVideo = row * col;
+
+  var rowHeight = 12/row;
+  var colWidth = 12/col;
+  var divrowhtml = '<div class="row-xs-'+rowHeight+'">'
+  var divcolhtml = '<div class = "yt-cell col-sm-'+colWidth+' col-md-'+colWidth+' col-lg-'+colWidth+' col-xs-'+colWidth+'"></div>'
   var spanhtml = '<span class = "player_state">state</span>'
   for (var i=0; i<row; i++){
     var ddiv = $(divrowhtml);
     var ddiv_state = $(divrowhtml);
+    divGrid[i] = [];
     for  (var j=0; j<col; j++){
       var dcol = $(divcolhtml);
       var dcol_state = $(divcolhtml);
       dcol.appendTo(ddiv);
-      dcol.attr("id","cell-"+(i * row + j));
-      var spanElem = $(spanhtml);
-      spanElem.attr("id","state-cell-"+(i * row + j));
-      spanElem.appendTo(dcol_state);
+      dcol.attr("id","cell-"+ i +"-"+ j);
+      divGrid[i][j] = "cell-"+ i +"-"+ j;
+      divRowGrid[i] = ddiv;
+      if(DEBUG){
+        dcol_state.addClass("div_state");
+        var spanElem = $(spanhtml);
+        spanElem.attr("id","state-cell-"+ i +"-"+ j);
+        spanElem.appendTo(dcol_state);
+      }
       dcol_state.appendTo(ddiv_state);
     }
     $("#youtubegrid").append(ddiv);
-    $("#youtubegrid-state").append(ddiv_state);
+    if(DEBUG)$("#youtubegrid-state").append(ddiv_state);
+    if(!DEBUG) $("#youtubegrid-state").remove();
   }
 
-  cellWidth = ddiv.height();
-  cellHeight = dcol.width();
+  cellHeight = ddiv.height();
+  cellWidth = dcol.width();
 
   for ( i=0; i< row; i++){
     for ( j=0 ; j<col; j++){
-      addVideo(i * row + j);
+      addVideo(i,j);
     }
   }
 }
 
-function addVideo(index){
-  var player = new YT.Player("cell-"+(index), {
-     height: cellWidth,
-     width:  cellHeight,
+function addVideo(i,j){
+  var player = new YT.Player("cell-"+ i +"-"+ j, {
+     height: cellHeight,
+     width:  cellWidth,
      videoId: youtubeid,
      events: {
        'onReady': onPlayerReady,
@@ -276,7 +425,7 @@ function search(query) {
 	$.getJSON(url, params, function (query) {
 		searchResult = query.items
 		searchResult.forEach(function(entry) {
-		    console.log(entry.snippet.title); // 화면에 출력해보려고 했는데, codemirror에 output은 어떻게 하는지 잘 모르겠네요.
+		    if(DEBUG)console.log(entry.snippet.title); // 화면에 출력해보려고 했는데, codemirror에 output은 어떻게 하는지 잘 모르겠네요.
         $("#youtube-result").append(entry.snippet.title + ",<span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">" + entry.id.videoId + "</span><br>")
         $("#yt-r-" +entry.id.videoId).click(function(){
           updateCodeMirror(entry.id.videoId);
@@ -300,5 +449,5 @@ function updateCodeMirror(data){
 
 function selectFromResult(index) {
 	var videoId = searchResult[index].id.videoId
-	addGrid(row,col, videoId)
+	createGrid(row,col, videoId)
 }
