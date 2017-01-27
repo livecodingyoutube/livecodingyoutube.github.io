@@ -17,6 +17,7 @@ border-1px{
   border:solid;
   width:30%;
   top:0px;
+  bottom:0px;
   right: 0%;
   height: 100%;
   position:absolute;
@@ -25,6 +26,7 @@ border-1px{
   background-color: white;
   color:black;
 
+  overflow-y: scroll;
 }
 
 #resizable{
@@ -61,6 +63,11 @@ border-1px{
 
 .yt-cell{
   border: solid 2px yellow;
+}
+
+.thumb{
+	width:120px;
+	height:80px;
 }
 
 .row-xs-12 { height: 100%; }

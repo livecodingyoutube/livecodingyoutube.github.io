@@ -257,7 +257,21 @@ $(document).ready(function () {
       }
     };
     var map = {"Shift-Enter": livecode};
+
+	// for (i = 1; i <= 5; i++) {
+	//     map["Ctrl-" + i] = function(cm) {
+	//     	selectFromResult(i)
+	//     }
+	// }
+	var jsCode = ""
+	for (i = 1; i <= 5; i++) {
+		jsCode += "map[\"Ctrl-\" + "+i+"] = function(cm) { selectFromResult("+i+") };\n";
+	}
+	eval(jsCode)
+
     editor.addKeyMap(map);
+
+	$("#youtube-result").hide();
 });
 
 function addGrid(addRow,addCol,id){
@@ -415,6 +429,8 @@ function setVideoId(text){
 }
 
 function search(query) {
+	$("#youtube-result").show();
+
 	url = 'https://www.googleapis.com/youtube/v3/search';
 	var params = {
 		part: 'snippet',
@@ -426,7 +442,15 @@ function search(query) {
 		searchResult = query.items
 		searchResult.forEach(function(entry) {
 		    if(DEBUG)console.log(entry.snippet.title); // 화면에 출력해보려고 했는데, codemirror에 output은 어떻게 하는지 잘 모르겠네요.
-        $("#youtube-result").append(entry.snippet.title + ",<span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">" + entry.id.videoId + "</span><br>")
+	    console.log(entry.snippet.title); // 화면에 출력해보려고 했는데, codemirror에 output은 어떻게 하는지 잘 모르겠네요.
+
+			title = entry.snippet.title;
+			thumburl =  entry.snippet.thumbnails.default.url;
+			thumbimg = '<pre><img class="thumb" src="'+thumburl+'"></pre>';
+
+			$('#youtube-result').append('<span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">' + thumbimg + title + '</span>');
+
+        // $("#youtube-result").append(entry.snippet.title + ",<span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">" + entry.id.videoId + "</span><br>")
         $("#yt-r-" +entry.id.videoId).click(function(){
           updateCodeMirror(entry.id.videoId);
         });
@@ -448,6 +472,11 @@ function updateCodeMirror(data){
 
 
 function selectFromResult(index) {
-	var videoId = searchResult[index].id.videoId
-	createGrid(row,col, videoId)
+	var videoId = searchResult[index-1].id.videoId;
+	updateCodeMirror(videoId);
+	// addGrid(row,col, videoId)
+
+	$("#youtube-result").hide();
+
+
 }
