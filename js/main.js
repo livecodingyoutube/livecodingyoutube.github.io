@@ -430,6 +430,7 @@ function setVideoId(text){
 
 function search(query) {
 	$("#youtube-result").show();
+	$('#youtube-result').empty();
 
 	url = 'https://www.googleapis.com/youtube/v3/search';
 	var params = {
