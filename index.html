@@ -53,7 +53,6 @@
 // press shift+enter to run each line.
 // press Ctrl+#n to select from search.
 
-setGrid(1,2)
 search("Sang Won Lee aural Cavity")
 selectFromResult(0)
 clearInterval(handle)
@@ -63,7 +62,9 @@ handle = setInterval(function(){
 phase(-200)
 
 playall()
-
+speed(1.25) // for all
+speed(0.5, 0) // one item
+speed(2, 1,2) // multiple items
 
 createGrid(4,4,"5y88CkstcWc")
 createGrid(2,2,"FGBhQbmPwH8")

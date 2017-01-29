@@ -481,3 +481,29 @@ function selectFromResult(index) {
 
 
 }
+
+// methods to control playback
+// scheme: func (param, index0, index1, index2, ...)
+
+function playbackControl(indices, func) {
+    var selectedVideos = []
+    if (indices.length > 1) {
+        for(var i=1; i< indices.length; i++){
+            var index = indices[i];
+            selectedVideos.push(targetVideos[index]);
+        }
+    } else if (indices.length == 1) {
+        selectedVideos = targetVideos
+    }
+
+    for (var i=0; i<selectedVideos.length; i++) {
+        func(selectedVideos[i])
+    }
+}
+
+function speed() {
+    var s = arguments[0];
+    playbackControl(arguments, function (v) {
+        v.setPlaybackRate(s)
+    })
+}
