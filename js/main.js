@@ -504,14 +504,14 @@ function playbackControl(indices, func) {
 }
 
 function speed() {
-    playbackControl(arguments, function (video, param) {
-        video.setPlaybackRate(param)
+    playbackControl(arguments, function (video, newSpeed) {
+        video.setPlaybackRate(newSpeed)
     })
 }
 
 function mute() {
-    playbackControl(arguments, function (video, param) {
-        if (param)
+    playbackControl(arguments, function (video, boolean) {
+        if (boolean)
           video.mute()
         else
           video.unMute()
@@ -519,14 +519,20 @@ function mute() {
 }
 
 function volume() {
-    playbackControl(arguments, function (video, param) {
-        video.setVolume(param)
+    playbackControl(arguments, function (video, newVolume) {
+        video.setVolume(newVolume)
     })
 }
 
 function turnup() {
-    playbackControl(arguments, function (video, param) {
-        var newVolume = video.getVolume() + param
+    playbackControl(arguments, function (video, diff) {
+        var newVolume = video.getVolume() + diff
         video.setVolume(newVolume)
+    })
+}
+
+function replaceVideo() {
+    playbackControl(arguments, function (video, newId) {
+        video.cueVideoById(newId)
     })
 }
