@@ -419,15 +419,6 @@ function addVideo(i,j){
 }
 var searchResult = [];
 
-function setGrid(pRow,pCol) {
-    row = pRow;
-    col = pCol;
-}
-
-function setVideoId(text){
-  alert(text);
-}
-
 function search(query) {
 	$("#youtube-result").show();
 	$('#youtube-result').empty();
@@ -535,4 +526,46 @@ function replaceVideo() {
     playbackControl(arguments, function (video, newId) {
         video.cueVideoById(newId)
     })
+}
+
+function fadeIn() {
+    var duration = arguments[0];
+    var diff = 10.0 / duration;
+
+    playbackControl(arguments, function (v, p) {
+        v.setVolume(0);
+        v.playVideo();
+
+        function fadeInInner(video, diff) {
+            var currentVolume = video.getVolume();
+            // console.log("cur: " + currentVolume + "/ diff: "+diff);
+            if (currentVolume < 100) {
+                video.setVolume(currentVolume + diff);
+                return setTimeout((function() {
+                    return fadeInInner(video, diff);
+                }), 100);
+            }
+        }
+
+        fadeInInner(v, diff);
+    });
+}
+
+function fadeOut() {
+    var duration = arguments[0];
+    var diff = 10.0 / duration;
+
+    playbackControl(arguments, function (v, p) {
+        function fadeOutInner(video, diff) {
+            var currentVolume = video.getVolume();
+            if (currentVolume > 0) {
+                video.setVolume(currentVolume - diff);
+                return setTimeout((function() {
+                    return fadeOutInner(video, diff);
+                }), 100);
+            }
+        }
+
+        fadeOutInner(v, diff);
+    });
 }

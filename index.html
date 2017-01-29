@@ -53,8 +53,12 @@
 // press shift+enter to run each line.
 // press Ctrl+#n to select from search.
 
+createGrid(2,2,"FGBhQbmPwH8")
+fadeIn(3, 0,1) // fadeIn with duration of 3 secs.
+fadeOut(5) // all videos fade out in 5 seconds.
+
 search("Sang Won Lee aural Cavity")
-selectFromResult(0)
+selectFromResult(1) // equivalent to Ctrl+1. (first item. arr[0])
 clearInterval(handle)
 handle = setInterval(function(){
 	jump(-1.5)
