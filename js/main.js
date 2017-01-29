@@ -496,14 +496,37 @@ function playbackControl(indices, func) {
         selectedVideos = targetVideos
     }
 
+    var param = indices[0];
+
     for (var i=0; i<selectedVideos.length; i++) {
-        func(selectedVideos[i])
+        func(selectedVideos[i], param)
     }
 }
 
 function speed() {
-    var s = arguments[0];
-    playbackControl(arguments, function (v) {
-        v.setPlaybackRate(s)
+    playbackControl(arguments, function (video, param) {
+        video.setPlaybackRate(param)
+    })
+}
+
+function mute() {
+    playbackControl(arguments, function (video, param) {
+        if (param)
+          video.mute()
+        else
+          video.unMute()
+    })
+}
+
+function volume() {
+    playbackControl(arguments, function (video, param) {
+        video.setVolume(param)
+    })
+}
+
+function turnup() {
+    playbackControl(arguments, function (video, param) {
+        var newVolume = video.getVolume() + param
+        video.setVolume(newVolume)
     })
 }
