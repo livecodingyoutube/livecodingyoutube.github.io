@@ -427,7 +427,8 @@ function search(query) {
 	var params = {
 		part: 'snippet',
 		key: 'AIzaSyDAKDaBy_JDwcScSHqDQimOOLjdPImLanc', // github gist에서 본 api_token 이라서 새로 하나 받아야 할 것 같아요.
-		q: query
+		q: query,
+		type: "video"
 	};
 
 	$.getJSON(url, params, function (query) {
