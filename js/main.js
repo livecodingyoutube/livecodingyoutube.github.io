@@ -77,6 +77,12 @@ function pause(index){
   targetVideos[index].pauseVideo();
 }
 
+function play(){
+  playbackControl(arguments, function (video, newSpeed) {
+      video.playVideo();
+  })
+}
+
 function playall(sync){
   // check if all videos are in non-buffering state;
   if(sync){
@@ -225,7 +231,8 @@ $(document).ready(function () {
   var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
         lineNumbers: false,
         styleActiveLine: true,
-        matchBrackets: true
+        matchBrackets: true,
+        height: 'auto'
     });
     // jquery ui
     $( "#resizable" ).resizable();
@@ -434,14 +441,14 @@ function search(query) {
 	$.getJSON(url, params, function (query) {
 		searchResult = query.items
 		searchResult.forEach(function(entry) {
-		    if(DEBUG)console.log(entry.snippet.title); // 화면에 출력해보려고 했는데, codemirror에 output은 어떻게 하는지 잘 모르겠네요.
+		  if(DEBUG)console.log(entry.snippet.title); // 화면에 출력해보려고 했는데, codemirror에 output은 어떻게 하는지 잘 모르겠네요.
 	    console.log(entry.snippet.title); // 화면에 출력해보려고 했는데, codemirror에 output은 어떻게 하는지 잘 모르겠네요.
 
 			title = entry.snippet.title;
 			thumburl =  entry.snippet.thumbnails.default.url;
-			thumbimg = '<pre><img class="thumb" src="'+thumburl+'"></pre>';
+			thumbimg = '<img class="thumb-img" src="'+thumburl+'">';
 
-			$('#youtube-result').append('<span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">' + thumbimg + title + '</span>');
+			$('#youtube-result').append('<div class = "thumb" id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ "><div>' + thumbimg +'</div><div class = "thumb-title" >'+ title + '</div>');
 
         // $("#youtube-result").append(entry.snippet.title + ",<span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">" + entry.id.videoId + "</span><br>")
         $("#yt-r-" +entry.id.videoId).click(function(){
@@ -529,6 +536,17 @@ function replaceVideo() {
     })
 }
 
+function fadeInInner(video, diff) {
+    var currentVolume = video.getVolume();
+    // console.log("cur: " + currentVolume + "/ diff: "+diff);
+    if (currentVolume < 100) {
+        video.setVolume(currentVolume + diff);
+        return setTimeout((function() {
+            return fadeInInner(video, diff);
+        }), 100);
+    }
+}
+
 function fadeIn() {
     var duration = arguments[0];
     var diff = 10.0 / duration;
@@ -536,19 +554,10 @@ function fadeIn() {
     playbackControl(arguments, function (v, p) {
         v.setVolume(0);
         v.playVideo();
+    });
 
-        function fadeInInner(video, diff) {
-            var currentVolume = video.getVolume();
-            // console.log("cur: " + currentVolume + "/ diff: "+diff);
-            if (currentVolume < 100) {
-                video.setVolume(currentVolume + diff);
-                return setTimeout((function() {
-                    return fadeInInner(video, diff);
-                }), 100);
-            }
-        }
-
-        fadeInInner(v, diff);
+    playbackControl(arguments, function (v, p) {
+      fadeInInner(v, diff);
     });
 }
 
