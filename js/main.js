@@ -5,6 +5,7 @@ var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+var all = null;
 var loopHandles = [];
 var jumpTimestamp = 0;
 var row = 4;
@@ -15,7 +16,6 @@ var numReadyVideo = 0;
 var targetVideos = [];
 var initialLoading = true;
 var youtubeid = "";
-var divGrid = [];
 var gridVideos = [];
 
 var YTSTATE_UNSTARTED = -1;
@@ -29,91 +29,21 @@ function onYouTubeIframeAPIReady() {
   if(DEBUG)console.log("is ready");
 }
 
-function phase(interval){
-  if(interval>=0){
-    for (var i=1; i<targetVideos.length; i++){
-      (function(vindex){
-        if(DEBUG)console.log("vindex",vindex, ",interval_order", interval_order);
-          setTimeout(function(){
-          targetVideos[vindex].playVideo();
-        },vindex*interval);
-      })(i)
-      targetVideos[i].pauseVideo(); // do not need to
-    }
-    return ;
-  }
- // interval < 0
-  for (var i=targetVideos.length-2; i>=0; i--){
-    (function(vindex){
-        if(DEBUG)console.log("vindex",vindex, ",interval_order", interval_order);
-        setTimeout(function(){
-        targetVideos[vindex].playVideo();
-      },(targetVideos.length - vindex-1)*-interval);
-    })(i)
-    targetVideos[i].pauseVideo();
-  }
-
-}
-
-function syncallt(time){
-    pauseall();
-    seekall(time);
-    playall();
-}
-
-function syncalli(index){
-    pauseall();
-    seekall(targetVideos[index].getCurrentTime());
-    playall();
-}
-
-function pauseall(){
-  for (var i=0; i<targetVideos.length; i++){
-    targetVideos[i].pauseVideo();
-  }
-}
-
-function pause(index){
-  targetVideos[index].pauseVideo();
-}
-
-function play(){
-  playbackControl(arguments, function (video, newSpeed) {
-      video.playVideo();
-  })
-}
-
-function playall(sync){
-  // check if all videos are in non-buffering state;
-  if(sync){
-    for (var i=0; i<targetVideos.length; i++){
-      if(targetVideos[i].getPlayerState() == 3){
-        setTimeout(function(){
-          playall(sync);
-        },50);
-        return;
-      }
-    }
-  }
-
-  for (var i=0; i<targetVideos.length; i++){
-    targetVideos[i].playVideo();
-  }
-}
-
-function seekall(num){
-  for (var i=0; i<targetVideos.length; i++){
-    targetVideos[i].seekTo(num,true);
-  }
-}
-
 function onPlayerReady(event) {
-  var i = parseInt(event.target.getIframe().id.substr(5,1))
-  var j = parseInt(event.target.getIframe().id.substr(7,1))
+  var i = parseInt(event.target.getIframe().getAttribute("row"))
+  var j = parseInt(event.target.getIframe().getAttribute("col"))
   if(!gridVideos[i]) gridVideos[i] = [];
   gridVideos[i][j] = event.target;
-  event.target.mute()
-  event.target.seekTo(0);
+  function initialize(){
+    if(event.target.mute == undefined){
+      setTimeout(initialize,10);
+      return;
+    }
+    event.target.mute()
+    event.target.seekTo(0);
+  }
+  initialize();
+
 }
 
 // 5. The API calls this function when the player's state changes.
@@ -133,97 +63,6 @@ function parseYTState(num){
 
 function setMark(){
   markTimestamp = (new Date()).getTime();
-}
-
-function unloop(index){
-  if(index){
-    clearInterval(loopHandles[index]);
-    loopHandles[index] = null;
-    return;
-  }
-  loopHandles.forEach(function(item){
-    clearInterval(item);
-  });
-  loopHandles = [];
-}
-
-function loop(index,back,interval, phase){
-  var goToTime = targetVideos[index].getCurrentTime() - back;
-  targetVideos[index].seekTo(goToTime)
-  var handle = setInterval(function(){
-    targetVideos[index].seekTo(goToTime)
-  },interval * 1000);
-  if(loopHandles[index]){
-    clearInterval(loopHandles[index]);
-  }
-  loopHandles[index] = handle;
-}
-
-function loopall(back, interval, phase){
-  var now = (new Date()).getTime();
-  if(!back){
-    if(markTimestamp < 0){
-      alert("set the marker first");
-    }
-    back = now - markTimestamp;
-  }
-  if(!interval) interval = back;
-  for (var i=0; i<targetVideos.length; i++){
-    loop(i,back,interval)
-  }
-}
-
-function jump(i,num){
-  jumpTimestamp = (new Date()).getTime();
-  console.log("timeStamp:",jumpTimestamp, " i:", i);
-  targetVideos[i].seekTo(targetVideos[i].getCurrentTime() + num,true);
-}
-
-function jumpall(num, phase){
-
-  if(phase){
-    for(var i=1; i< targetVideos.length; i++){
-      var now = (new Date()).getTime();
-      (function(index){
-        setTimeout(function(){
-          console.log("time taken: ", ((new Date()).getTime() - now));
-          console.log("phase * index ", phase * index);
-          jump(index,num)
-        }, phase * index)
-      })(i);
-    }
-    jump(0,num)
-    return;
-  }
-
-  for(var i=0; i< targetVideos.length; i++){
-    jump(i,num)
-  }
-}
-
-
-
-function onPlayerStateChange(event) {
-  var now = (new Date()).getTime();
-  if(DEBUG)$("#state-" + event.target.h.id).text(parseYTState(event.data));
-  if(DEBUG&&event.data == YTSTATE_PLAYING){
-    console.log("now - jumpTimestamp:", (now - jumpTimestamp));
-  }
-  if(initialLoading && event.data == YTSTATE_PLAYING){
-    numReadyVideo++;
-    event.target.pauseVideo();
-    event.target.seekTo(0);
-    event.target.unMute()
-  //  addVideo(numReadyVideo);
-  }
-  if(numReadyVideo == numLoadingVideo){
-    initialLoading = false;
-    targetVideos = [];
-    for(var i = 0; i < gridVideos.length; i++)
-    {
-      targetVideos = targetVideos.concat(gridVideos[i]);
-    }
-  }
 }
 
 // run the function when the document is ready
@@ -265,29 +104,25 @@ $(document).ready(function () {
     };
     var map = {"Shift-Enter": livecode};
 
-	// for (i = 1; i <= 5; i++) {
-	//     map["Ctrl-" + i] = function(cm) {
-	//     	selectFromResult(i)
-	//     }
-	// }
-	var jsCode = ""
-	for (i = 1; i <= 5; i++) {
-		jsCode += "map[\"Ctrl-\" + "+i+"] = function(cm) { selectFromResult("+i+") };\n";
-	}
-	eval(jsCode)
 
     editor.addKeyMap(map);
 
 	$("#youtube-result").hide();
+
+  $(window).keydown(function(e){
+      if (e.ctrlKey){
+        $("#code-container").toggle();
+      }
+  });
 });
 
 function addGrid(addRow,addCol,id){
   initialLoading = true;
 
-  var row = divGrid.length + addRow;
+  var row = gridVideos.length + addRow;
   var col = addCol;
-  if(divGrid[0])
-    col +=  divGrid[0].length;
+  if(gridVideos[0])
+    col +=  gridVideos[0].length;
 
   if(id)
     youtubeid = id;
@@ -310,47 +145,49 @@ function addGrid(addRow,addCol,id){
 
   var divrowhtml = '<div class='+divrowclass+'">'
   var divcolhtml = '<div class = "'+divcolclass+'"></div>'
+  // let's add the videos
+  cellWidth = $(document).width() / col;
+  cellHeight = $(document).height() / col;
+
   // let's resize the existing divs in gridstack.
-  for (var i=0; i < divGrid.length; i++){
+  for (var i=0; i < gridVideos.length; i++){
     divRowGrid[i].removeClass();
     divRowGrid[i].addClass(divrowclass);
-    for (var j=0; j< divGrid[0].length; j++){
-      $("#" + divGrid[i][j]).removeClass();
-      $("#" + divGrid[i][j]).addClass(divcolclass);
-      $("#" + divGrid[i][j]).attr('width',($("#" + divGrid[i][j]).attr('width') * divGrid[0].length / col));
-      $("#" + divGrid[i][j]).attr('height',($("#" + divGrid[i][j]).attr('height') * divGrid.length / row));
+    for (var j=0; j< gridVideos[0].length; j++){
+      $(gridVideos[i][j].getIframe()).removeClass().addClass(divcolclass);
+      gridVideos[i][j].setSize(cellWidth,cellHeight);
     }
   }
-  // let's add the videos
-  cellWidth = $("#" + divGrid[0][0]).attr('width');
-  cellHeight = $("#" + divGrid[0][0]).attr('height');
+
 
   // add cols first
-  for (var i=0; i <divGrid.length; i++){
-    if(!divGrid[0])
-      divGrid = [];
-    for (var j= divGrid[0].length; j< col; j++){
+  for (var i=0; i <gridVideos.length; i++){
+    if(!gridVideos[0])
+      gridVideos = [];
+    for (var j= gridVideos[0].length; j< col; j++){
       numLoadingVideo++;
       var dcol = $(divcolhtml);
       dcol.attr("id","cell-"+ i +"-"+ j);
+      dcol.attr("row",i);
+      dcol.attr("col",j);
       divRowGrid[i].append(dcol)
       if(id)addVideo(i,j);
     }
   }
 
   // add rows first
-  for (var i=divGrid.length; i <row; i++){
+  for (var i=gridVideos.length; i <row; i++){
     var ddiv = $(divrowhtml);
     var ddiv_state = $(divrowhtml);
-    divGrid[i] = [];
     $("#youtubegrid").append(ddiv);
 
     for (var j= 0; j< col; j++){
       numLoadingVideo++;
       var dcol = $(divcolhtml);
       dcol.attr("id","cell-"+ i +"-"+ j);
+      dcol.attr("row",i);
+      dcol.attr("col",j);
       ddiv.append(dcol)
-      divGrid[i][j] = "cell-"+ i +"-"+ j;
       if(id)addVideo(i,j);
     }
     divRowGrid[i] = ddiv;
@@ -360,8 +197,8 @@ function addGrid(addRow,addCol,id){
 function createGrid(row,col,id){
   youtubeid = id;
   initialLoading = true;
-  divGrid  = [];
   divRowGrid  = [];
+  gridVideos = [];
   unloop();
   $("#youtubegrid").empty();
   $("#youtubegrid-state").empty();
@@ -369,7 +206,7 @@ function createGrid(row,col,id){
   targetVideos = [];
   if(12%row!=0 || 12%col!=0){
     alert("we can only take a divisor of 12.");
-    return;
+    return
   }
   numLoadingVideo = row * col;
 
@@ -381,13 +218,13 @@ function createGrid(row,col,id){
   for (var i=0; i<row; i++){
     var ddiv = $(divrowhtml);
     var ddiv_state = $(divrowhtml);
-    divGrid[i] = [];
     for  (var j=0; j<col; j++){
       var dcol = $(divcolhtml);
       var dcol_state = $(divcolhtml);
       dcol.appendTo(ddiv);
       dcol.attr("id","cell-"+ i +"-"+ j);
-      divGrid[i][j] = "cell-"+ i +"-"+ j;
+      dcol.attr("row",i);
+      dcol.attr("col",j);
       divRowGrid[i] = ddiv;
       if(DEBUG){
         dcol_state.addClass("div_state");
@@ -448,38 +285,22 @@ function search(query) {
 			thumburl =  entry.snippet.thumbnails.default.url;
 			thumbimg = '<img class="thumb-img" src="'+thumburl+'">';
 
-			$('#youtube-result').append('<div class = "thumb" id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ "><div>' + thumbimg +'</div><div class = "thumb-title" >'+ title + '</div>');
+			$('#youtube-result').append('<div class = "thumb" id="yt-r-' +entry.id.videoId+ '" yt-id="' +entry.id.videoId+ '"><div>' + thumbimg +'</div><div class = "thumb-title" >'+ title + '</div>');
 
         // $("#youtube-result").append(entry.snippet.title + ",<span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">" + entry.id.videoId + "</span><br>")
-        $("#yt-r-" +entry.id.videoId).click(function(){
-          updateCodeMirror(entry.id.videoId);
-        });
+      $("#yt-r-" +entry.id.videoId).click(function(){
+        updateCodeMirror(entry.id.videoId);
+      });
 		});
 	});
 }
 
 function updateCodeMirror(data){
-    var cm = $('.CodeMirror')[0].CodeMirror;
-    var doc = cm.getDoc();
-    var cursor = doc.getCursor(); // gets the line number in the cursor position
-    var line = doc.getLine(cursor.line); // get the line contents
-    var pos = { // create a new object to avoid mutation of the original selection
-        line: cursor.line,
-        ch: cursor.ch // set the character position to the end of the line
-    }
-    doc.replaceRange(data, pos); // adds a new line
+    var doc = $('.CodeMirror')[0].CodeMirror.getDoc();
+    doc.replaceSelection(data); // adds a new line
+    $("#youtube-result").hide();
 }
 
-
-function selectFromResult(index) {
-	var videoId = searchResult[index-1].id.videoId;
-	updateCodeMirror(videoId);
-	// addGrid(row,col, videoId)
-
-	$("#youtube-result").hide();
-
-
-}
 
 // methods to control playback
 // scheme: func (param, index0, index1, index2, ...)
@@ -502,38 +323,47 @@ function playbackControl(indices, func) {
     }
 }
 
-function speed() {
-    playbackControl(arguments, function (video, newSpeed) {
-        video.setPlaybackRate(newSpeed)
-    })
+function speed(list, newSpeed) {
+    var selectedVideos =  selectVideos(list);
+    selectedVideos.forEach(function(video){
+      video.setPlaybackRate(newSpeed)
+    });
 }
 
-function mute() {
-    playbackControl(arguments, function (video, boolean) {
-        if (boolean)
-          video.mute()
-        else
-          video.unMute()
-    })
+function mute(list, mute) {
+    var selectedVideos =  selectVideos(list);
+    selectedVideos.forEach(function(video){
+      if (mute)
+        video.mute()
+      else
+        video.unMute()
+    });
 }
 
-function volume() {
-    playbackControl(arguments, function (video, newVolume) {
-        video.setVolume(newVolume)
-    })
+function volume(list,vol) {
+  var selectedVideos =  selectVideos(list);
+  selectedVideos.forEach(function(video){
+    video.setVolume(vol);
+  });
 }
 
-function turnup() {
-    playbackControl(arguments, function (video, diff) {
-        var newVolume = video.getVolume() + diff
-        video.setVolume(newVolume)
-    })
+function turnup(list, diff) {
+  var selectedVideos =  selectVideos(list);
+  selectedVideos.forEach(function(video){
+    var newVolume = video.getVolume() + diff
+    video.setVolume(newVolume)
+  });
 }
-
-function replaceVideo() {
-    playbackControl(arguments, function (video, newId) {
-        video.cueVideoById(newId)
-    })
+//function alternate(list, )
+function replaceVideo(list, id, cancelloop) {
+  var selectedVideos =  selectVideos(list);
+  selectedVideos.forEach(function(video){
+    video.cueVideoById(id)
+    video.playVideo();
+    if(video.loopHandle && cancelloop){
+      clearInterval(video.loopHandle);
+    }
+  });
 }
 
 function fadeInInner(video, diff) {
@@ -547,35 +377,221 @@ function fadeInInner(video, diff) {
     }
 }
 
-function fadeIn() {
-    var duration = arguments[0];
-    var diff = 10.0 / duration;
 
-    playbackControl(arguments, function (v, p) {
-        v.setVolume(0);
+function fadeIn(list,duration) {
+    if(!duration) duration = 5;
+    var diff = 10.0 / duration;
+    var selectedVideos =  selectVideos(list);
+    selectedVideos.forEach(function(v){
+      v.setVolume(0);
+      if(v.getPlayerState() != YTSTATE_PLAYING)
         v.playVideo();
     });
 
-    playbackControl(arguments, function (v, p) {
+    selectedVideos.forEach(function(v){
       fadeInInner(v, diff);
+    });
+
+}
+
+function fadeOutInner(video, diff) {
+    var currentVolume = video.getVolume();
+    if (currentVolume > 0) {
+        video.setVolume(currentVolume - diff);
+        return setTimeout((function() {
+            return fadeOutInner(video, diff);
+        }), 100);
+    }
+}
+
+function fadeOut(list,duration) {
+    if(!duration) duration = 5;
+    var diff = 10.0 / duration;
+    var selectedVideos =  selectVideos(list);
+    selectedVideos.forEach(function(v){
+      fadeOutInner(v, diff);
     });
 }
 
-function fadeOut() {
-    var duration = arguments[0];
-    var diff = 10.0 / duration;
+function selectVideos(list){
+  var selectedVideos = []
+  if (list === parseInt(list, 10) ){
+      selectedVideos.push(targetVideos[list])
+  }
+  else if (list == null) {
+      selectedVideos = targetVideos
+  }
+  else if (list.length > 1) {
+      for(var i=0; i< list.length; i++){
+          var index = list[i];
+          selectedVideos.push(targetVideos[index]);
+      }
+  }
+  else{
+    alert("ERROR: edge case found", list);
+  }
+  return selectedVideos;
+}
 
-    playbackControl(arguments, function (v, p) {
-        function fadeOutInner(video, diff) {
-            var currentVolume = video.getVolume();
-            if (currentVolume > 0) {
-                video.setVolume(currentVolume - diff);
-                return setTimeout((function() {
-                    return fadeOutInner(video, diff);
-                }), 100);
-            }
-        }
+function phase(list,interval){ // interval and video id
 
-        fadeOutInner(v, diff);
+  var selectedVideos =  selectVideos(list);
+  if(interval>=0){
+    for (var i=1; i<selectedVideos.length; i++){
+      (function(vindex){
+        if(DEBUG)console.log("vindex",vindex);
+          setTimeout(function(){
+          selectedVideos[vindex].playVideo();
+        },vindex*interval* 1000);
+      })(i)
+      selectedVideos[i].pauseVideo(); // do not need to
+    }
+    return ;
+  }
+ // interval < 0
+  for (var i=selectedVideos.length-2; i>=0; i--){
+    (function(vindex){
+        if(DEBUG)console.log("vindex",vindex);
+        setTimeout(function(){
+          selectedVideos[vindex].playVideo();
+        },(selectedVideos.length - vindex-1)*-interval* 1000);
+    })(i)
+    selectedVideos[i].pauseVideo();
+  }
+
+}
+
+function sync(list, index){
+    seek(list, targetVideos[index].getCurrentTime());
+}
+
+function pause(list){
+  var selectedVideos =  selectVideos(list);
+
+  selectedVideos.forEach(function(video){
+      video.pauseVideo();
+  });
+}
+
+function setQ(list, quality){
+  var selectedVideos =  selectVideos(list);
+
+  selectedVideos.forEach(function(video){
+      video.setPlaybackQuality(quality);
+  });
+}
+
+function play(list){
+  var selectedVideos =  selectVideos(list);
+  selectedVideos.forEach(function(video){
+      video.playVideo();
+  });
+}
+
+function seek(list, num){
+  var selectedVideos =  selectVideos(list);
+  selectedVideos.forEach(function(video){
+      video.seekTo(num,true);
+  });
+}
+
+function loop(list,back,interval, phase){
+  var selectedVideos =  selectVideos(list);
+  if(!phase) phase = 0;
+/*  for (var i=0; selectedVideos.length; i++){
+    var video = selectedVideos[i];
+    var atTime = video.getCurrentTime() - back;
+    video.seekTo(atTime)
+    if(video.loopHandle){
+      clearInterval(video.loopHandle);
+    }
+    video.loopHandle = setInterval(function(){
+      video.seekTo(atTime)
+    },(interval + i * phase)* 1000);
+  }*/
+  selectedVideos.forEach(function(video, index){
+    var atTime = video.getCurrentTime() - back;
+    video.seekTo(atTime)
+    if(video.loopHandle){
+      clearInterval(video.loopHandle);
+    }
+    video.loopHandle = setInterval(function(){
+      video.seekTo(atTime)
+    },(interval + index * phase)* 1000);
+  });
+}
+
+function loopAt(list,atTime,interval, phase){
+  var selectedVideos =  selectVideos(list);
+  if(!phase) phase = 0;
+/*  for (var i=0; selectedVideos.length; i++){
+    var video = selectedVideos[i];
+    video.seekTo(atTime)
+    if(video.loopHandle){
+      clearInterval(video.loopHandle);
+    }
+    (function(v){
+      v.loopHandle = setInterval(function(){
+        v.seekTo(atTime)
+      },(interval + i * phase)* 1000);
+    })(video);
+  }*/
+  selectedVideos.forEach(function(video, index){
+    video.seekTo(atTime)
+    if(video.loopHandle){
+      clearInterval(video.loopHandle);
+    }
+    video.loopHandle = setInterval(function(){
+      video.seekTo(atTime)
+    },(interval + index * phase)* 1000);
+  });
+}
+
+function unloop(list){
+  var selectedVideos =  selectVideos(list);
+  selectedVideos.forEach(function(video){
+    if(video.loopHandle){
+      clearInterval(video.loopHandle);
+      video.loopHandle = null;
+    }
+  });
+}
+
+function jump(list,num,phase){
+  var selectedVideos =  selectVideos(list);
+  if(phase){
+    selectedVideos.forEach(function(video){
+        video.seekTo(video.getCurrenttime() + num,true);
     });
+  }
+  else{
+    selectedVideos.forEach(function(video, index){
+      setTimeout(function(){
+        video.seekTo(video.getCurrenttime() + num,true);
+      }, phase * index * 1000)
+    });
+  }
+}
+
+function onPlayerStateChange(event) {
+  var now = (new Date()).getTime();
+  if(DEBUG)$("#state-" + event.target.h.id).text(parseYTState(event.data));
+  if(DEBUG&&event.data == YTSTATE_PLAYING){
+    console.log("now - jumpTimestamp:", (now - jumpTimestamp));
+  }
+  if(initialLoading && event.data == YTSTATE_PLAYING){
+    numReadyVideo++;
+    event.target.pauseVideo();
+    event.target.seekTo(0);
+    event.target.unMute()
+  //  addVideo(numReadyVideo);
+  }
+  if(numReadyVideo == numLoadingVideo){
+    initialLoading = false;
+    targetVideos = [];
+    for(var i = 0; i < gridVideos.length; i++)
+    {
+      targetVideos = targetVideos.concat(gridVideos[i]);
+    }
+  }
 }

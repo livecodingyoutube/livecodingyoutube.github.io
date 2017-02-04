@@ -67,14 +67,27 @@ border-1px{
   border: solid 2px yellow;
   height:100%;
 }
+
+.CodeMirror-activeline-background {
+    background: #000000;
+    border-bottom: solid 2px yellow;
+    opacity:0.9;
+}
+.CodeMirror div.CodeMirror-cursor {
+    border-left: 3px solid white;
+}
+
+.CodeMirror-selected {
+    background: #282f02!important;
+}
+
 .CodeMirror {
-    font-family: monospace;
+  font-family: monospace;
     font-size: 20pt;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.0);
-    opacity:0.4;
-    color:red;
-
+    opacity: 0.7;
+    color: white;
 }
 .yt-cell{
   /*border: solid 2px yellow;*/

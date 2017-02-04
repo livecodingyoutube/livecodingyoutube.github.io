@@ -54,6 +54,17 @@
 // press shift+enter to run each line.
 // press Ctrl+#n to select from search.
 
+loopAt(3,197,4)// QE2CEh66gTg
+loopAt(2,164.57,0.2)//QE2CEh66gTg
+loopAt(1,154,0.3)//O-bjTfYILPs
+loopAt(0,33,0.5)//6auwxRuFjZk
+
+loopAt(3,197,4)// QE2CEh66gTg
+loopAt(2,334,2)//QE2CEh66gTg
+loopAt(1,345,6)//QE2CEh66gTg
+loopAt(0,225,4)//QE2CEh66gTg
+
+
 createGrid(2,2,"FGBhQbmPwH8")
 fadeIn(3, 0,1) // fadeIn with duration of 3 secs.
 fadeOut(5) // all videos fade out in 5 seconds.
@@ -62,11 +73,16 @@ search("Sang Won Lee aural Cavity")
 selectFromResult(1) // equivalent to Ctrl+1. (first item. arr[0])
 clearInterval(handle)
 handle = setInterval(function(){
-	jump(-1.5)
+jump(-1.5)
 },1500)
-phase(-200)
+loopAt([0,3],152,0.2)
+loopAt([2,1],158,1)
+unloop(all)
+seek([2,3],144)
+seek([0,1],146)
 
-playall()
+seek(all,144)
+play()
 createGrid(3,3,"FGBhQbmPwH8")
 
 createGrid(3,3,"FGBhQbmPwH8")
@@ -106,6 +122,7 @@ pauseall()
 loop(0,1,0.4)
 
 ff(1)
+
 
       </textarea>
 
