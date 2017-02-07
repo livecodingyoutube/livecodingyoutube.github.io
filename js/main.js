@@ -79,32 +79,34 @@ $(document).ready(function () {
 
     var livecode = function(cm){
       var code = cm.getDoc().getSelection();
-      if(code.length > 0){ // when there is any selected text
-        if(DEBUG)console.log(code);
-        try {
-            eval(code);
-        } catch (e) {
-            if (e instanceof SyntaxError) {
-                alert(e.message);
-            }
-            console.error(e);
-        }
-      }else{ // when there is no selectino, evaluate the line where the cursor is
+      if(code.length <= 0){ // when there is any selected text
         code = cm.getDoc().getLine(cm.getDoc().getCursor().line);
-        if(DEBUG)console.log(code);
-        try {
-            eval(code);
-        } catch (e) {
-            if (e instanceof SyntaxError) {
-                alert(e.message);
-            }
-            console.error(e);
+      }
+      if(DEBUG)console.log(code);
+      try {
+        eval(code);
+      } catch (e) {
+        if (e instanceof SyntaxError) {
+          alert(e.message);
         }
+        console.error(e);
       }
     };
-    var map = {"Shift-Enter": livecode};
+    var showHelp = function(cm){
+      var code = cm.getDoc().getSelection();
+      if (code.length <= 0){ // when there is any selected text
+        code = cm.getDoc().getLine(cm.getDoc().getCursor().line);
+      }
+      var index = code.indexOf('(');
+      var fName = code.substring(0, index);
+      console.log(fName);
+      help(fName);
+    };
 
-
+    var map = {
+      "Shift-Enter": livecode,
+      "Alt-Enter": showHelp
+    };
     editor.addKeyMap(map);
 
 	$("#youtube-result").hide();
@@ -704,6 +706,12 @@ function onPlayerStateChange(event) {
 }
 
 function help() {
-  var win = window.open('/doc/global.html', '_blank');
+  var path = '/doc/global.html'
+  if (arguments.length == 1) {
+    var fName = arguments[0];
+    path += '#' + fName;
+  }
+  console.log(path);
+  var win = window.open(path, '_blank');
   win.focus();
 }
