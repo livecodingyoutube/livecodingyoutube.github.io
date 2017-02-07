@@ -640,6 +640,7 @@ function here(list){
       return;
     }
     loopAt(list[index],video.here,video.getCurrentTime() - video.here);
+    video.here = null;
   });
 }
 
