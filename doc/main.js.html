@@ -1,4 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: main.js</title>
 
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: main.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>
 var DEBUG = false;
 var markTimestamp = -1;
 var tag = document.createElement('script');
@@ -42,7 +70,6 @@ function onPlayerReady(event) {
     event.target.mute()
     event.target.seekTo(0);
   }
-  event.target.initialized = true;
   initialize();
 
 }
@@ -72,76 +99,40 @@ $(document).ready(function () {
         lineNumbers: false,
         styleActiveLine: true,
         matchBrackets: true,
-        height: 'auto',
-        mode:{name: "javascript", json: true}
+        height: 'auto'
     });
     // jquery ui
     $( "#resizable" ).resizable();
     $( "#resizable" ).draggable();
 
     var livecode = function(cm){
-      var doc = cm.getDoc();
-      var code = doc.getSelection();
+      var code = cm.getDoc().getSelection();
       if(code.length > 0){ // when there is any selected text
         if(DEBUG)console.log(code);
         try {
             eval(code);
-            _.defer(function(){
-              var start = doc.getCursor("anchor");
-              var end = doc.getCursor("head");
-              if(start.line > end.line || (start.line == end.line && start.ch > end.ch)){
-                var temp = start;
-                start = end;
-                end = temp;
-              }
-              var obj = doc.markText(start,end,{className:"ex-high"});
-              setTimeout(function(){
-                _.defer(function(){
-                  obj.clear();
-                });
-              },100);
-            });
-
         } catch (e) {
-            alert(e.message);
+            if (e instanceof SyntaxError) {
+                alert(e.message);
+            }
             console.error(e);
         }
       }else{ // when there is no selectino, evaluate the line where the cursor is
-        code = doc.getLine(cm.getDoc().getCursor().line);
+        code = cm.getDoc().getLine(cm.getDoc().getCursor().line);
         if(DEBUG)console.log(code);
         try {
             eval(code);
-            _.defer(function(){
-              var start = doc.getCursor();
-              var obj = doc.markText({line:start.line, ch:0},{line:start.line, ch:code.length},{className:"ex-high"});
-              setTimeout(function(){
-                _.defer(function(){
-                  obj.clear();
-                });
-              },100);
-            });
         } catch (e) {
-            alert(e.message);
+            if (e instanceof SyntaxError) {
+                alert(e.message);
+            }
             console.error(e);
-          }
-    };
-
-    var map = {"Shift-Enter": livecode};
-    var showHelp = function(cm){
-      var code = cm.getDoc().getSelection();
-      if (code.length <= 0){ // when there is any selected text
-        code = cm.getDoc().getLine(cm.getDoc().getCursor().line);
+        }
       }
-      var index = code.indexOf('(');
-      var fName = code.substring(0, index);
-      console.log(fName);
-      help(fName);
     };
+    var map = {"Shift-Enter": livecode};
 
-    var map = {
-      "Shift-Enter": livecode,
-      "Alt-Enter": showHelp
-    };
+
     editor.addKeyMap(map);
 
 	$("#youtube-result").hide();
@@ -170,7 +161,7 @@ function addGrid(addRow,addCol,id){
   if(id)
     youtubeid = id;
 
-  if(row <0 || col < 0){
+  if(row &lt;0 || col &lt; 0){
     alert("Row col value negatives.!");
     return;
   }
@@ -186,17 +177,17 @@ function addGrid(addRow,addCol,id){
   var divrowclass = 'row-xs-'+rowHeight;
   var divcolclass = 'yt-cell col-sm-'+colWidth+' col-md-'+colWidth+' col-lg-'+colWidth+' col-xs-'+colWidth;
 
-  var divrowhtml = '<div class='+divrowclass+'">'
-  var divcolhtml = '<div class = "'+divcolclass+'"></div>'
+  var divrowhtml = '&lt;div class='+divrowclass+'">'
+  var divcolhtml = '&lt;div class = "'+divcolclass+'">&lt;/div>'
   // let's add the videos
   cellWidth = $(document).width() / col;
-  cellHeight = $(document).height() / row;
+  cellHeight = $(document).height() / col;
 
   // let's resize the existing divs in gridstack.
-  for (var i=0; i < gridVideos.length; i++){
+  for (var i=0; i &lt; gridVideos.length; i++){
     divRowGrid[i].removeClass();
     divRowGrid[i].addClass(divrowclass);
-    for (var j=0; j< gridVideos[0].length; j++){
+    for (var j=0; j&lt; gridVideos[0].length; j++){
       $(gridVideos[i][j].getIframe()).removeClass().addClass(divcolclass);
       gridVideos[i][j].setSize(cellWidth,cellHeight);
     }
@@ -204,10 +195,10 @@ function addGrid(addRow,addCol,id){
 
 
   // add cols first
-  for (var i=0; i <gridVideos.length; i++){
+  for (var i=0; i &lt;gridVideos.length; i++){
     if(!gridVideos[0])
       gridVideos = [];
-    for (var j= gridVideos[0].length; j< col; j++){
+    for (var j= gridVideos[0].length; j&lt; col; j++){
       numLoadingVideo++;
       var dcol = $(divcolhtml);
       dcol.attr("id","cell-"+ i +"-"+ j);
@@ -219,12 +210,12 @@ function addGrid(addRow,addCol,id){
   }
 
   // add rows first
-  for (var i=gridVideos.length; i <row; i++){
+  for (var i=gridVideos.length; i &lt;row; i++){
     var ddiv = $(divrowhtml);
     var ddiv_state = $(divrowhtml);
     $("#youtubegrid").append(ddiv);
 
-    for (var j= 0; j< col; j++){
+    for (var j= 0; j&lt; col; j++){
       numLoadingVideo++;
       var dcol = $(divcolhtml);
       dcol.attr("id","cell-"+ i +"-"+ j);
@@ -261,13 +252,13 @@ function createGrid(row,col,id){
 
   var rowHeight = 12/row;
   var colWidth = 12/col;
-  var divrowhtml = '<div class="row-xs-'+rowHeight+'">'
-  var divcolhtml = '<div class = "yt-cell col-sm-'+colWidth+' col-md-'+colWidth+' col-lg-'+colWidth+' col-xs-'+colWidth+'"></div>'
-  var spanhtml = '<span class = "player_state">state</span>'
-  for (var i=0; i<row; i++){
+  var divrowhtml = '&lt;div class="row-xs-'+rowHeight+'">'
+  var divcolhtml = '&lt;div class = "yt-cell col-sm-'+colWidth+' col-md-'+colWidth+' col-lg-'+colWidth+' col-xs-'+colWidth+'">&lt;/div>'
+  var spanhtml = '&lt;span class = "player_state">state&lt;/span>'
+  for (var i=0; i&lt;row; i++){
     var ddiv = $(divrowhtml);
     var ddiv_state = $(divrowhtml);
-    for  (var j=0; j<col; j++){
+    for  (var j=0; j&lt;col; j++){
       var dcol = $(divcolhtml);
       var dcol_state = $(divcolhtml);
       dcol.appendTo(ddiv);
@@ -291,8 +282,8 @@ function createGrid(row,col,id){
   cellHeight = ddiv.height();
   cellWidth = dcol.width();
 
-  for ( i=0; i< row; i++){
-    for ( j=0 ; j<col; j++){
+  for ( i=0; i&lt; row; i++){
+    for ( j=0 ; j&lt;col; j++){
       addVideo(i,j);
     }
   }
@@ -313,7 +304,7 @@ function addVideo(i,j){
 var searchResult = [];
 
 /**
- * Search YouTube
+ * Search YouTube 
  * @param {string} query - Query to search.
  */
 function search(query) {
@@ -325,9 +316,7 @@ function search(query) {
 		part: 'snippet',
 		key: 'AIzaSyDAKDaBy_JDwcScSHqDQimOOLjdPImLanc', // github gist에서 본 api_token 이라서 새로 하나 받아야 할 것 같아요.
 		q: query,
-		type: "video",
-    maxResults: 10,
-    videoEmbeddable	:"true"
+		type: "video"
 	};
 
 	$.getJSON(url, params, function (query) {
@@ -338,11 +327,11 @@ function search(query) {
 
 			title = entry.snippet.title;
 			thumburl =  entry.snippet.thumbnails.default.url;
-			thumbimg = '<img class="thumb-img" src="'+thumburl+'">';
+			thumbimg = '&lt;img class="thumb-img" src="'+thumburl+'">';
 
-			$('#youtube-result').append('<div class = "thumb" id="yt-r-' +entry.id.videoId+ '" yt-id="' +entry.id.videoId+ '"><div>' + thumbimg +'</div><div class = "thumb-title" >'+ title + '</div>');
+			$('#youtube-result').append('&lt;div class = "thumb" id="yt-r-' +entry.id.videoId+ '" yt-id="' +entry.id.videoId+ '">&lt;div>' + thumbimg +'&lt;/div>&lt;div class = "thumb-title" >'+ title + '&lt;/div>');
 
-        // $("#youtube-result").append(entry.snippet.title + ",<span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">" + entry.id.videoId + "</span><br>")
+        // $("#youtube-result").append(entry.snippet.title + ",&lt;span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">" + entry.id.videoId + "&lt;/span>&lt;br>")
       $("#yt-r-" +entry.id.videoId).click(function(){
         updateCodeMirror(entry.id.videoId);
       });
@@ -356,6 +345,31 @@ function updateCodeMirror(data){
     $("#youtube-result").hide();
 }
 
+
+// methods to control playback
+// scheme: func (indexes, param)
+// e.g.
+// seek(all, 44) // seek 44s of all videos
+// seek(0,44) // seek 44s of the video 0
+// seek([0,3],44) // seek 44s of the video 0 and 3
+
+function playbackControl(indices, func) {
+    var selectedVideos = []
+    if (indices.length > 1) {
+        for(var i=1; i&lt; indices.length; i++){
+            var index = indices[i];
+            selectedVideos.push(targetVideos[index]);
+        }
+    } else if (indices.length == 1) {
+        selectedVideos = targetVideos
+    }
+
+    var param = indices[0];
+
+    for (var i=0; i&lt;selectedVideos.length; i++) {
+        func(selectedVideos[i], param)
+    }
+}
 
 /**
  * Change playback speed of the selected videos.
@@ -408,7 +422,6 @@ function turnup(list, diff) {
     video.setVolume(newVolume)
   });
 }
-//function alternate(list, )
 
 /**
  * Replace the selected videos with id.
@@ -416,25 +429,21 @@ function turnup(list, diff) {
  * @param {string} id - YouTube identifier.
  * @param {bool} cancelloop - To cancel the loop that may have been set earlier.
  */
- function cue(list, id, cancelloop) {
-   if(!cancelloop) cancelloop = true;
+function replaceVideo(list, id, cancelloop) {
   var selectedVideos =  selectVideos(list);
   selectedVideos.forEach(function(video){
     video.cueVideoById(id)
-    video.mute();
     video.playVideo();
-    event.target.initialized = true;
-    if(video.loopHandle && cancelloop){
+    if(video.loopHandle &amp;&amp; cancelloop){
       clearInterval(video.loopHandle);
     }
-    if(video.here)video.here = null;
   });
 }
 
 function fadeInInner(video, diff) {
     var currentVolume = video.getVolume();
     // console.log("cur: " + currentVolume + "/ diff: "+diff);
-    if (currentVolume < 100) {
+    if (currentVolume &lt; 100) {
         video.setVolume(currentVolume + diff);
         return setTimeout((function() {
             return fadeInInner(video, diff);
@@ -496,7 +505,7 @@ function selectVideos(list){
       selectedVideos = targetVideos
   }
   else if (list.length > 1) {
-      for(var i=0; i< list.length; i++){
+      for(var i=0; i&lt; list.length; i++){
           var index = list[i];
           selectedVideos.push(targetVideos[index]);
       }
@@ -516,7 +525,7 @@ function phase(list,interval){ // interval and video id
 
   var selectedVideos =  selectVideos(list);
   if(interval>=0){
-    for (var i=1; i<selectedVideos.length; i++){
+    for (var i=1; i&lt;selectedVideos.length; i++){
       (function(vindex){
         if(DEBUG)console.log("vindex",vindex);
           setTimeout(function(){
@@ -527,7 +536,7 @@ function phase(list,interval){ // interval and video id
     }
     return ;
   }
- // interval < 0
+ // interval &lt; 0
   for (var i=selectedVideos.length-2; i>=0; i--){
     (function(vindex){
         if(DEBUG)console.log("vindex",vindex);
@@ -629,16 +638,6 @@ function loop(list,back,interval, phase){
     },(interval + index * phase)* 1000);
   });
 }
-function here(list){
-  var selectedVideos =  selectVideos(list);
-  selectedVideos.forEach(function(video, index){
-    if(!video.here){
-      video.here = video.getCurrentTime();
-      return;
-    }
-    loopAt(list[index],video.here,video.getCurrentTime() - video.here);
-  });
-}
 
 /**
  * LoopAt
@@ -712,35 +711,45 @@ function jump(list,num,phase){
 function onPlayerStateChange(event) {
   var now = (new Date()).getTime();
   if(DEBUG)$("#state-" + event.target.h.id).text(parseYTState(event.data));
-  if(DEBUG&&event.data == YTSTATE_PLAYING){
+  if(DEBUG&amp;&amp;event.data == YTSTATE_PLAYING){
     console.log("now - jumpTimestamp:", (now - jumpTimestamp));
   }
-  if(event.target.initialized && event.data == YTSTATE_PLAYING){
+  if(initialLoading &amp;&amp; event.data == YTSTATE_PLAYING){
     numReadyVideo++;
-    event.target.initialized = false;
     event.target.pauseVideo();
     event.target.seekTo(0);
     event.target.unMute()
   //  addVideo(numReadyVideo);
-    if(numReadyVideo == numLoadingVideo){
-      initialLoading = false;
-      targetVideos = [];
-      for(var i = 0; i < gridVideos.length; i++)
-      {
-        targetVideos = targetVideos.concat(gridVideos[i]);
-      }
+  }
+  if(numReadyVideo == numLoadingVideo){
+    initialLoading = false;
+    targetVideos = [];
+    for(var i = 0; i &lt; gridVideos.length; i++)
+    {
+      targetVideos = targetVideos.concat(gridVideos[i]);
     }
   }
-
 }
+</code></pre>
+        </article>
+    </section>
 
-function help() {
-  var path = '/doc/global.html'
-  if (arguments.length == 1) {
-    var fName = arguments[0];
-    path += '#' + fName;
-  }
-  console.log(path);
-  var win = window.open(path, '_blank');
-  win.focus();
-}
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addGrid">addGrid</a></li><li><a href="global.html#createGrid">createGrid</a></li><li><a href="global.html#fadeIn">fadeIn</a></li><li><a href="global.html#fadeOut">fadeOut</a></li><li><a href="global.html#jump">jump</a></li><li><a href="global.html#loop">loop</a></li><li><a href="global.html#loopAt">loopAt</a></li><li><a href="global.html#mute">mute</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#phase">phase</a></li><li><a href="global.html#play">play</a></li><li><a href="global.html#replaceVideo">replaceVideo</a></li><li><a href="global.html#search">search</a></li><li><a href="global.html#seek">seek</a></li><li><a href="global.html#setQ">setQ</a></li><li><a href="global.html#speed">speed</a></li><li><a href="global.html#sync">sync</a></li><li><a href="global.html#turnup">turnup</a></li><li><a href="global.html#unloop">unloop</a></li><li><a href="global.html#volume">volume</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon Feb 06 2017 20:44:53 GMT-0500 (EST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
