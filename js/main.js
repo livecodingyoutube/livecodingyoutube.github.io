@@ -123,7 +123,8 @@ $(document).ready(function () {
         } catch (e) {
             alert(e.message);
             console.error(e);
-          }
+        }
+      }
     };
 
     var map = {"Shift-Enter": livecode};
