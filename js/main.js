@@ -42,6 +42,7 @@ function onPlayerReady(event) {
     event.target.mute()
     event.target.seekTo(0);
   }
+  event.target.initialized = true;
   initialize();
 
 }
@@ -71,40 +72,61 @@ $(document).ready(function () {
         lineNumbers: false,
         styleActiveLine: true,
         matchBrackets: true,
-        height: 'auto'
+        height: 'auto',
+        mode:{name: "javascript", json: true}
     });
     // jquery ui
     $( "#resizable" ).resizable();
     $( "#resizable" ).draggable();
 
     var livecode = function(cm){
-      var code = cm.getDoc().getSelection();
+      var doc = cm.getDoc();
+      var code = doc.getSelection();
       if(code.length > 0){ // when there is any selected text
         if(DEBUG)console.log(code);
         try {
             eval(code);
+            _.defer(function(){
+              var start = doc.getCursor("anchor");
+              var end = doc.getCursor("head");
+              if(start.line > end.line || (start.line == end.line && start.ch > end.ch)){
+                var temp = start;
+                start = end;
+                end = temp;
+              }
+              var obj = doc.markText(start,end,{className:"ex-high"});
+              setTimeout(function(){
+                _.defer(function(){
+                  obj.clear();
+                });
+              },100);
+            });
+
         } catch (e) {
-            if (e instanceof SyntaxError) {
-                alert(e.message);
-            }
+            alert(e.message);
             console.error(e);
         }
       }else{ // when there is no selectino, evaluate the line where the cursor is
-        code = cm.getDoc().getLine(cm.getDoc().getCursor().line);
+        code = doc.getLine(cm.getDoc().getCursor().line);
         if(DEBUG)console.log(code);
         try {
             eval(code);
+            _.defer(function(){
+              var start = doc.getCursor();
+              var obj = doc.markText({line:start.line, ch:0},{line:start.line, ch:code.length},{className:"ex-high"});
+              setTimeout(function(){
+                _.defer(function(){
+                  obj.clear();
+                });
+              },100);
+            });
         } catch (e) {
-            if (e instanceof SyntaxError) {
-                alert(e.message);
-            }
+            alert(e.message);
             console.error(e);
         }
       }
     };
     var map = {"Shift-Enter": livecode};
-
-
     editor.addKeyMap(map);
 
 	$("#youtube-result").hide();
@@ -147,7 +169,7 @@ function addGrid(addRow,addCol,id){
   var divcolhtml = '<div class = "'+divcolclass+'"></div>'
   // let's add the videos
   cellWidth = $(document).width() / col;
-  cellHeight = $(document).height() / col;
+  cellHeight = $(document).height() / row;
 
   // let's resize the existing divs in gridstack.
   for (var i=0; i < gridVideos.length; i++){
@@ -272,7 +294,9 @@ function search(query) {
 		part: 'snippet',
 		key: 'AIzaSyDAKDaBy_JDwcScSHqDQimOOLjdPImLanc', // github gist에서 본 api_token 이라서 새로 하나 받아야 할 것 같아요.
 		q: query,
-		type: "video"
+		type: "video",
+    maxResults: 10,
+    videoEmbeddable	:"true"
 	};
 
 	$.getJSON(url, params, function (query) {
@@ -301,10 +325,9 @@ function updateCodeMirror(data){
     $("#youtube-result").hide();
 }
 
-
 // methods to control playback
 // scheme: func (param, index0, index1, index2, ...)
-
+/*
 function playbackControl(indices, func) {
     var selectedVideos = []
     if (indices.length > 1) {
@@ -322,7 +345,7 @@ function playbackControl(indices, func) {
         func(selectedVideos[i], param)
     }
 }
-
+*/
 function speed(list, newSpeed) {
     var selectedVideos =  selectVideos(list);
     selectedVideos.forEach(function(video){
@@ -355,14 +378,18 @@ function turnup(list, diff) {
   });
 }
 //function alternate(list, )
-function replaceVideo(list, id, cancelloop) {
+function cue(list, id, cancelloop) {
+  if(!cancelloop) cancelloop = true;
   var selectedVideos =  selectVideos(list);
   selectedVideos.forEach(function(video){
     video.cueVideoById(id)
+    video.mute();
     video.playVideo();
+    event.target.initialized = true;
     if(video.loopHandle && cancelloop){
       clearInterval(video.loopHandle);
     }
+    if(video.here)video.here = null;
   });
 }
 
@@ -520,7 +547,18 @@ function loop(list,back,interval, phase){
     },(interval + index * phase)* 1000);
   });
 }
+function here(list){
+  var selectedVideos =  selectVideos(list);
+  selectedVideos.forEach(function(video, index){
+    if(!video.here){
+      video.here = video.getCurrentTime();
+      return;
+    }
+    loopAt(list[index],video.here,video.getCurrentTime() - video.here);
+  });
+}
 
+//function alternate(list,interval)
 function loopAt(list,atTime,interval, phase){
   var selectedVideos =  selectVideos(list);
   if(!phase) phase = 0;
@@ -579,19 +617,21 @@ function onPlayerStateChange(event) {
   if(DEBUG&&event.data == YTSTATE_PLAYING){
     console.log("now - jumpTimestamp:", (now - jumpTimestamp));
   }
-  if(initialLoading && event.data == YTSTATE_PLAYING){
+  if(event.target.initialized && event.data == YTSTATE_PLAYING){
     numReadyVideo++;
+    event.target.initialized = false;
     event.target.pauseVideo();
     event.target.seekTo(0);
     event.target.unMute()
   //  addVideo(numReadyVideo);
-  }
-  if(numReadyVideo == numLoadingVideo){
-    initialLoading = false;
-    targetVideos = [];
-    for(var i = 0; i < gridVideos.length; i++)
-    {
-      targetVideos = targetVideos.concat(gridVideos[i]);
+    if(numReadyVideo == numLoadingVideo){
+      initialLoading = false;
+      targetVideos = [];
+      for(var i = 0; i < gridVideos.length; i++)
+      {
+        targetVideos = targetVideos.concat(gridVideos[i]);
+      }
     }
   }
+
 }
