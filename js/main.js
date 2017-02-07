@@ -421,6 +421,7 @@ function turnup(list, diff) {
  */
  function cue(list, id, cancelloop) {
    if(!cancelloop) cancelloop = true;
+   numReadyVideo -=list.length;
   var selectedVideos =  selectVideos(list);
   selectedVideos.forEach(function(video){
     video.cueVideoById(id)
