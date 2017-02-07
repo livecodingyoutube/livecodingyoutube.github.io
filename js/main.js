@@ -355,6 +355,8 @@ function updateCodeMirror(data){
     var doc = $('.CodeMirror')[0].CodeMirror.getDoc();
     doc.replaceSelection(data); // adds a new line
     $("#youtube-result").hide();
+    $('.CodeMirror')[0].CodeMirror.focus();
+
 }
 
 
