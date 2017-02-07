@@ -704,6 +704,6 @@ function onPlayerStateChange(event) {
 }
 
 function help() {
-  var win = window.open('/doc/', '_blank');
+  var win = window.open('/doc/global.html', '_blank');
   win.focus();
 }
