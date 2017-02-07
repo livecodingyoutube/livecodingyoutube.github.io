@@ -702,3 +702,8 @@ function onPlayerStateChange(event) {
     }
   }
 }
+
+function help() {
+  var win = window.open('/doc/', '_blank');
+  win.focus();
+}
