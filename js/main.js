@@ -12,7 +12,6 @@ var row = 4;
 var col = 4;
 var cellWidth = 50;
 var cellHeight = 50;
-var numReadyVideo = 0;
 var targetVideos = [];
 var initialLoading = true;
 var youtubeid = "";
@@ -252,7 +251,6 @@ function createGrid(row,col,id){
   unloop();
   $("#youtubegrid").empty();
   $("#youtubegrid-state").empty();
-  numReadyVideo = 0;
   targetVideos = [];
   if(12%row!=0 || 12%col!=0){
     alert("we can only take a divisor of 12.");
@@ -327,8 +325,9 @@ function search(query) {
 		key: 'AIzaSyDAKDaBy_JDwcScSHqDQimOOLjdPImLanc', // github gist에서 본 api_token 이라서 새로 하나 받아야 할 것 같아요.
 		q: query,
 		type: "video",
-    maxResults: 10,
-    videoEmbeddable	:"true"
+    maxResults: 20,
+    videoEmbeddable	:"true",
+    videoLicense:"youtube"
 	};
 
 	$.getJSON(url, params, function (query) {
@@ -421,10 +420,10 @@ function turnup(list, diff) {
  */
  function cue(list, id, cancelloop) {
    if(!cancelloop) cancelloop = true;
-   numReadyVideo -=list.length;
   var selectedVideos =  selectVideos(list);
   selectedVideos.forEach(function(video){
     video.cueVideoById(id)
+    video.initialized = true;
     video.mute();
     video.playVideo();
     event.target.initialized = true;
@@ -640,7 +639,8 @@ function here(list){
       video.here = video.getCurrentTime();
       return;
     }
-    loopAt(list[index],video.here,video.getCurrentTime() - video.here);
+    // this is problematic
+    loopAt(list,video.here,video.getCurrentTime() - video.here);
     video.here = null;
   });
 }
@@ -708,7 +708,7 @@ function jump(list,num,phase){
   else{
     selectedVideos.forEach(function(video, index){
       setTimeout(function(){
-        video.seekTo(video.getCurrenttime() + num,true);
+        video.seekTo(video.getCurrentTime() + num,true);
       }, phase * index * 1000)
     });
   }
@@ -721,19 +721,15 @@ function onPlayerStateChange(event) {
     console.log("now - jumpTimestamp:", (now - jumpTimestamp));
   }
   if(event.target.initialized && event.data == YTSTATE_PLAYING){
-    numReadyVideo++;
     event.target.initialized = false;
     event.target.pauseVideo();
     event.target.seekTo(0);
     event.target.unMute()
-  //  addVideo(numReadyVideo);
-    if(numReadyVideo == numLoadingVideo){
-      initialLoading = false;
-      targetVideos = [];
-      for(var i = 0; i < gridVideos.length; i++)
-      {
-        targetVideos = targetVideos.concat(gridVideos[i]);
-      }
+    initialLoading = false;
+    targetVideos = [];
+    for(var i = 0; i < gridVideos.length; i++)
+    {
+      targetVideos = targetVideos.concat(gridVideos[i]);
     }
   }
 
