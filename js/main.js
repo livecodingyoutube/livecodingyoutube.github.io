@@ -426,6 +426,7 @@ function turnup(list, diff) {
     video.initialized = true;
     video.mute();
     video.playVideo();
+    video.setPlaybackRate(1);
     event.target.initialized = true;
     if(video.loopHandle && cancelloop){
       clearInterval(video.loopHandle);
