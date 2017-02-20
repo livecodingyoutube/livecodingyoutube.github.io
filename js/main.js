@@ -1,4 +1,5 @@
-
+var rand = Math.random;
+var iter = setInterval;
 var DEBUG = false;
 var markTimestamp = -1;
 var tag = document.createElement('script');
@@ -344,7 +345,7 @@ function search(query) {
 
         // $("#youtube-result").append(entry.snippet.title + ",<span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">" + entry.id.videoId + "</span><br>")
       $("#yt-r-" +entry.id.videoId).click(function(){
-        updateCodeMirror(entry.id.videoId);
+        updateCodeMirror("\"" + entry.id.videoId + "\"");
       });
 		});
 	});
