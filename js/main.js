@@ -313,28 +313,6 @@ function addVideo(i,j){
 var searchResult = [];
 
 /**
- * Returns an array of video index that excludes the specified video index.
- * @param {integer []} indices
-e.g. if the current grid is 3X3.
-not(1) returns [0,2,3,4,5,6,7,8]
-e.g. if the current grid is 4X4.
-not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
- */
- function not() {
- 	console.log('asdf');
- 	var indices = [];
- 	for (var i = 0; i < arguments.length; i++) {
- 		indices[i] = arguments[i];
- 	}
- 	var list = [];
-	for (var i = 1; i <= targetVideos.length; i++) {
-   		if (indices.includes(i) == false)
-   			list.push(i);
-	}
-	return list;
- }
-
-/**
  * Search YouTube
  * @param {string} query - Query to search.
  */
@@ -514,9 +492,39 @@ function fadeOut(list,duration) {
     });
 }
 
+/**
+ * Returns an array of video index that excludes the specified video index.
+ * @param {integer []} indices
+e.g. if the current grid is 3X3.
+not(1) returns [0,2,3,4,5,6,7,8]
+e.g. if the current grid is 4X4.
+not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
+ */
+ function not() {
+ 	var list = [...Array(targetVideos.length).keys()];
+ 	for (var i = 0; i < arguments.length; i++) {
+ 		target = arguments[i];
+ 		index = list.indexOf(target);
+ 		if (index > -1) {
+ 			list.splice(index, 1);
+ 		}
+ 	}
+ 	return list;
+ }
+
 function selectVideos(list){
   var selectedVideos = []
-  if (list === parseInt(list, 10) ){
+
+  if (typeof(list) == "string") {
+  	var condition = list;
+  	var selectedVideos = [];
+	for (var i = 0; i < targetVideos.length; i++) {
+   		if (eval(i + condition))
+   			selectedVideos.push(targetVideos[i]);
+	}
+	return selectedVideos;
+  }
+  else if (list === parseInt(list, 10) ){
       selectedVideos.push(targetVideos[list])
   }
   else if (list == null) {
