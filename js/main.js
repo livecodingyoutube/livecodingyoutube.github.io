@@ -150,8 +150,15 @@ $(document).ready(function () {
   $(window).keydown(function(e){
       if (e.ctrlKey){
         $("#code-container").toggle();
+
+        if ($("#code-container")[0].style["display"] == "none")
+          $('#youtubegrid-state').show();
+        else
+          $('#youtubegrid-state').hide();
       }
   });
+
+  createGrid(2,2,"njnnKcBnr9w");
 });
 
 /**
@@ -262,26 +269,39 @@ function createGrid(row,col,id){
   var rowHeight = 12/row;
   var colWidth = 12/col;
   var divrowhtml = '<div class="row-xs-'+rowHeight+'">'
-  var divcolhtml = '<div class = "yt-cell col-sm-'+colWidth+' col-md-'+colWidth+' col-lg-'+colWidth+' col-xs-'+colWidth+'"></div>'
-  var spanhtml = '<span class = "player_state">state</span>'
+  var divcolhtml = '<div class ="yt-cell col-sm-'+colWidth+' col-md-'+colWidth+' col-lg-'+colWidth+' col-xs-'+colWidth+'"></div>'
+  var divyoutube = '<div class ="youtube_cell"></div>'
+  var spanhtml = '<span class = "player_state" style="position:relative; z-index:10">state</span>'
   for (var i=0; i<row; i++){
     var ddiv = $(divrowhtml);
     var ddiv_state = $(divrowhtml);
     for  (var j=0; j<col; j++){
-      var dcol = $(divcolhtml);
-      var dcol_state = $(divcolhtml);
-      dcol.appendTo(ddiv);
+      var dcolContainer = $(divcolhtml);
+      dcolContainer.appendTo(ddiv);
+      
+      var dcol = $(divyoutube);
+      dcol.appendTo(dcolContainer);
       dcol.attr("id","cell-"+ i +"-"+ j);
       dcol.attr("row",i);
       dcol.attr("col",j);
       divRowGrid[i] = ddiv;
+
+      var cover = $(spanhtml);
+      cover.appendTo(dcolContainer);
+      cover.attr("id","container-"+ i +"-"+ j);
+      $("#container-"+ i +"-"+ j).click(function(){
+        console.log(i+','+j);
+      });
+
+
       if(DEBUG){
+        var dcol_state = $(divcolhtml);
         dcol_state.addClass("div_state");
         var spanElem = $(spanhtml);
         spanElem.attr("id","state-cell-"+ i +"-"+ j);
         spanElem.appendTo(dcol_state);
+        dcol_state.appendTo(ddiv_state);
       }
-      dcol_state.appendTo(ddiv_state);
     }
     $("#youtubegrid").append(ddiv);
     if(DEBUG)$("#youtubegrid-state").append(ddiv_state);
