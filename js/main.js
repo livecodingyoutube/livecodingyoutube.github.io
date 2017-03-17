@@ -150,17 +150,24 @@ $(document).ready(function () {
   $(window).keydown(function(e){
       if (e.ctrlKey){
         $("#code-container").toggle();
+        $(".go-back-editor").toggle();
       }
+  });
+
+
+  $(".go-back-button").click(function(){
+    $("#code-container").toggle();
+    $(".go-back-editor").toggle();
   });
 });
 
 /**
- * Add grid
+ * Add columns and rows to the grid
  * @param {integer} addRow - number of rows to add.
  * @param {integer} addCol - number of columns to add.
  * @param {string} id - YouTube identifier.
  */
-function addGrid(addRow,addCol,id){
+function add(addRow,addCol,id){
   initialLoading = true;
 
   var row = gridVideos.length + addRow;
@@ -200,6 +207,12 @@ function addGrid(addRow,addCol,id){
     for (var j=0; j< gridVideos[0].length; j++){
       $(gridVideos[i][j].getIframe()).removeClass().addClass(divcolclass);
       gridVideos[i][j].setSize(cellWidth,cellHeight);
+    /*  var stateDV = $("#state-div-"+ i +"-"+ j);
+      stateDV.removeClass();
+      stateDV.addClass(divrowclass);
+
+      $("#state-div-"+ i +"-"+ j).width(cellWidth);
+      $("#state-div-"+ i +"-"+ j).height(cellHeight);*/
     }
   }
 
@@ -239,12 +252,12 @@ function addGrid(addRow,addCol,id){
 }
 
 /**
- * Create grid
+ * Create a grid
  * @param {integer} row - number of rows to create.
  * @param {integer} col - number of columns to create.
  * @param {string} id - YouTube identifier.
  */
-function createGrid(row,col,id){
+function create(row,col,id){
   youtubeid = id;
   initialLoading = true;
   divRowGrid  = [];
@@ -277,11 +290,13 @@ function createGrid(row,col,id){
       divRowGrid[i] = ddiv;
       if(DEBUG){
         dcol_state.addClass("div_state");
+        dcol_state.attr("id","state-div-"+ i +"-"+ j);
         var spanElem = $(spanhtml);
         spanElem.attr("id","state-cell-"+ i +"-"+ j);
         spanElem.appendTo(dcol_state);
+        dcol_state.appendTo(ddiv_state);
       }
-      dcol_state.appendTo(ddiv_state);
+
     }
     $("#youtubegrid").append(ddiv);
     if(DEBUG)$("#youtubegrid-state").append(ddiv_state);
@@ -555,6 +570,37 @@ function phase(list,interval){ // interval and video id
       (function(vindex){
         if(DEBUG)console.log("vindex",vindex);
           setTimeout(function(){
+          selectedVideos[vindex].seekTo(selectedVideos[vindex].getCurrentTime()- vindex*interval);
+        },vindex*interval* 1000);
+      })(i)
+    }
+    return ;
+  }
+ // interval < 0
+  for (var i=selectedVideos.length-2; i>=0; i--){
+    (function(vindex){
+        if(DEBUG)console.log("vindex",vindex);
+        setTimeout(function(){
+          selectedVideos[vindex].seekTo(selectedVideos[vindex].getCurrentTime()- (selectedVideos.length - vindex-1)*-interval);
+        },(selectedVideos.length - vindex-1)*-interval* 1000);
+    })(i)
+  }
+
+}
+
+/**
+ * Delay
+ * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer} interval - interval
+ */
+function delay(list,interval){ // interval and video id
+
+  var selectedVideos =  selectVideos(list);
+  if(interval>=0){
+    for (var i=1; i<selectedVideos.length; i++){
+      (function(vindex){
+        if(DEBUG)console.log("vindex",vindex);
+          setTimeout(function(){
           selectedVideos[vindex].playVideo();
         },vindex*interval* 1000);
       })(i)
@@ -568,6 +614,8 @@ function phase(list,interval){ // interval and video id
         if(DEBUG)console.log("vindex",vindex);
         setTimeout(function(){
           selectedVideos[vindex].playVideo();
+
+
         },(selectedVideos.length - vindex-1)*-interval* 1000);
     })(i)
     selectedVideos[i].pauseVideo();
@@ -734,7 +782,7 @@ function jump(list,num,phase){
   var selectedVideos =  selectVideos(list);
   if(phase){
     selectedVideos.forEach(function(video){
-        video.seekTo(video.getCurrenttime() + num,true);
+        video.seekTo(video.getCurrentTime() + num,true);
     });
   }
   else{
