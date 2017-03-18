@@ -111,7 +111,7 @@ border-1px{
   display:none;
   position:fixed;
   right:0;
-  top:0;
+  top:200;
   z-index:999;
 }
 
