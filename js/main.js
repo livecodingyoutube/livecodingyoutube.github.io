@@ -85,6 +85,17 @@ $(document).ready(function () {
       if(code.length > 0){ // when there is any selected text
         if(DEBUG)console.log(code);
         try {
+            if(code.includes("setInterval")){
+              var sure;
+              if(code.substring(0,10)== "setInterval"){
+                sure = confirm("Are you sure you that want setInterval without a handle?");
+                if(!sure)return;
+              }
+              if(!code.includes("clearInterval")){
+                var sure = confirm("Are you sure? This does not have clearInterval. ");
+                if(!sure) return;
+              }
+            }
             eval(code);
             _.defer(function(){
               var start = doc.getCursor("anchor");
