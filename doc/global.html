@@ -94,7 +94,228 @@
     
 
     
-        <h3 class="subsection-title">Methods</h3>
+        <h3 class="subsection-title" id="_howToSelectVideos">How to select videos</h3>
+
+        
+    
+
+
+
+<div class="description">
+    For the most of the methods below, you need to specify which videos to control.
+There are various ways to select videos.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Options:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>index</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Single index of video</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>all</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">null</span>
+|
+
+<span class="param-type">all</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">All the videos</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>list</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;integer></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Indices of videos</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>not</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">not(indices)</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">All except indices. See <a href="global.html#not">not()</a></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>expression</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Condition text (e.g. ">3" or "%2==0")</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line849">line 849</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<h3 class="subsection-title">Methods</h3>
+
+
+
 
         
             
@@ -455,7 +676,7 @@
 
     
 
-    <h4 class="name" id="cue"><span class="type-signature"></span>cue<span class="signature">(list, id, cancelloop)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="cue"><span class="type-signature"></span>cue<span class="signature">(videos, id, cancelloop)</span><span class="type-signature"></span></h4>
 
     
 
@@ -498,19 +719,13 @@
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -520,7 +735,7 @@
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -638,7 +853,7 @@
 
     
 
-    <h4 class="name" id="delay"><span class="type-signature"></span>delay<span class="signature">(list, interval)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="delay"><span class="type-signature"></span>delay<span class="signature">(videos, interval)</span><span class="type-signature"></span></h4>
 
     
 
@@ -681,19 +896,13 @@
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -703,7 +912,7 @@
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -798,7 +1007,7 @@
 
     
 
-    <h4 class="name" id="fadeIn"><span class="type-signature"></span>fadeIn<span class="signature">(list, duration)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="fadeIn"><span class="type-signature"></span>fadeIn<span class="signature">(videos, duration)</span><span class="type-signature"></span></h4>
 
     
 
@@ -841,19 +1050,13 @@
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -863,7 +1066,7 @@
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -958,7 +1161,7 @@
 
     
 
-    <h4 class="name" id="fadeOut"><span class="type-signature"></span>fadeOut<span class="signature">(list, duration)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="fadeOut"><span class="type-signature"></span>fadeOut<span class="signature">(videos, duration)</span><span class="type-signature"></span></h4>
 
     
 
@@ -1001,19 +1204,13 @@
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -1023,7 +1220,7 @@
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -1118,7 +1315,7 @@
 
     
 
-    <h4 class="name" id="jump"><span class="type-signature"></span>jump<span class="signature">(list, num, phase)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="jump"><span class="type-signature"></span>jump<span class="signature">(videos, num, phase)</span><span class="type-signature"></span></h4>
 
     
 
@@ -1161,19 +1358,13 @@
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -1183,7 +1374,7 @@
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -1301,7 +1492,7 @@
 
     
 
-    <h4 class="name" id="loop"><span class="type-signature"></span>loop<span class="signature">(list, back, interval, phase)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="loop"><span class="type-signature"></span>loop<span class="signature">(videos, back, interval, phase)</span><span class="type-signature"></span></h4>
 
     
 
@@ -1344,19 +1535,13 @@
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -1366,7 +1551,7 @@
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -1507,7 +1692,7 @@
 
     
 
-    <h4 class="name" id="loopAt"><span class="type-signature"></span>loopAt<span class="signature">(list, atTime, interval, phase)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="loopAt"><span class="type-signature"></span>loopAt<span class="signature">(videos, atTime, interval, phase)</span><span class="type-signature"></span></h4>
 
     
 
@@ -1550,19 +1735,13 @@
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -1572,7 +1751,7 @@
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -1713,7 +1892,7 @@
 
     
 
-    <h4 class="name" id="mute"><span class="type-signature"></span>mute<span class="signature">(list, mute)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="mute"><span class="type-signature"></span>mute<span class="signature">(videos, mute)</span><span class="type-signature"></span></h4>
 
     
 
@@ -1756,19 +1935,13 @@
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -1778,7 +1951,7 @@
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -2008,7 +2181,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
     
 
-    <h4 class="name" id="pause"><span class="type-signature"></span>pause<span class="signature">(list)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="pause"><span class="type-signature"></span>pause<span class="signature">(videos)</span><span class="type-signature"></span></h4>
 
     
 
@@ -2051,19 +2224,13 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -2073,7 +2240,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -2145,7 +2312,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
     
 
-    <h4 class="name" id="phase"><span class="type-signature"></span>phase<span class="signature">(list, interval)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="phase"><span class="type-signature"></span>phase<span class="signature">(videos, interval)</span><span class="type-signature"></span></h4>
 
     
 
@@ -2188,19 +2355,13 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -2210,7 +2371,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -2305,7 +2466,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
     
 
-    <h4 class="name" id="play"><span class="type-signature"></span>play<span class="signature">(list)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="play"><span class="type-signature"></span>play<span class="signature">(videos)</span><span class="type-signature"></span></h4>
 
     
 
@@ -2348,19 +2509,13 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -2370,7 +2525,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -2573,7 +2728,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
     
 
-    <h4 class="name" id="seek"><span class="type-signature"></span>seek<span class="signature">(list, seconds)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="seek"><span class="type-signature"></span>seek<span class="signature">(videos, seconds)</span><span class="type-signature"></span></h4>
 
     
 
@@ -2616,19 +2771,13 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -2638,7 +2787,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -2733,7 +2882,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
     
 
-    <h4 class="name" id="setQ"><span class="type-signature"></span>setQ<span class="signature">(list, quality)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="setQ"><span class="type-signature"></span>setQ<span class="signature">(videos, quality)</span><span class="type-signature"></span></h4>
 
     
 
@@ -2776,19 +2925,13 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -2798,7 +2941,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -2893,7 +3036,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
     
 
-    <h4 class="name" id="speed"><span class="type-signature"></span>speed<span class="signature">(list, newSpeed)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="speed"><span class="type-signature"></span>speed<span class="signature">(videos, newSpeed)</span><span class="type-signature"></span></h4>
 
     
 
@@ -2936,19 +3079,13 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -2958,7 +3095,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -3053,7 +3190,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
     
 
-    <h4 class="name" id="sync"><span class="type-signature"></span>sync<span class="signature">(list, index)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="sync"><span class="type-signature"></span>sync<span class="signature">(videos, index)</span><span class="type-signature"></span></h4>
 
     
 
@@ -3096,19 +3233,13 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -3118,7 +3249,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -3213,7 +3344,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
     
 
-    <h4 class="name" id="turnup"><span class="type-signature"></span>turnup<span class="signature">(list, diff)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="turnup"><span class="type-signature"></span>turnup<span class="signature">(videos, diff)</span><span class="type-signature"></span></h4>
 
     
 
@@ -3256,19 +3387,13 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -3278,7 +3403,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -3373,7 +3498,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
     
 
-    <h4 class="name" id="unloop"><span class="type-signature"></span>unloop<span class="signature">(list)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="unloop"><span class="type-signature"></span>unloop<span class="signature">(videos)</span><span class="type-signature"></span></h4>
 
     
 
@@ -3416,19 +3541,13 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -3438,7 +3557,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -3510,7 +3629,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
     
 
-    <h4 class="name" id="volume"><span class="type-signature"></span>volume<span class="signature">(list, vol)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="volume"><span class="type-signature"></span>volume<span class="signature">(videos, vol)</span><span class="type-signature"></span></h4>
 
     
 
@@ -3553,19 +3672,13 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
         <tr>
             
-                <td class="name"><code>list</code></td>
+                <td class="name"><code>videos</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;integer></span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">all</span>
+<span class="param-type">select</span>
 
 
             
@@ -3575,7 +3688,7 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 
             
 
-            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+            <td class="description last">See <a href="global.html#_howToSelectVideos">how to select videos</a>.</td>
         </tr>
 
     
@@ -3681,13 +3794,13 @@ not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#add">add</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#cue">cue</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fadeIn">fadeIn</a></li><li><a href="global.html#fadeOut">fadeOut</a></li><li><a href="global.html#jump">jump</a></li><li><a href="global.html#loop">loop</a></li><li><a href="global.html#loopAt">loopAt</a></li><li><a href="global.html#mute">mute</a></li><li><a href="global.html#not">not</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#phase">phase</a></li><li><a href="global.html#play">play</a></li><li><a href="global.html#search">search</a></li><li><a href="global.html#seek">seek</a></li><li><a href="global.html#setQ">setQ</a></li><li><a href="global.html#speed">speed</a></li><li><a href="global.html#sync">sync</a></li><li><a href="global.html#turnup">turnup</a></li><li><a href="global.html#unloop">unloop</a></li><li><a href="global.html#volume">volume</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#_howToSelectVideos">_howToSelectVideos</a></li><li><a href="global.html#add">add</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#cue">cue</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fadeIn">fadeIn</a></li><li><a href="global.html#fadeOut">fadeOut</a></li><li><a href="global.html#jump">jump</a></li><li><a href="global.html#loop">loop</a></li><li><a href="global.html#loopAt">loopAt</a></li><li><a href="global.html#mute">mute</a></li><li><a href="global.html#not">not</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#phase">phase</a></li><li><a href="global.html#play">play</a></li><li><a href="global.html#search">search</a></li><li><a href="global.html#seek">seek</a></li><li><a href="global.html#setQ">setQ</a></li><li><a href="global.html#speed">speed</a></li><li><a href="global.html#sync">sync</a></li><li><a href="global.html#turnup">turnup</a></li><li><a href="global.html#unloop">unloop</a></li><li><a href="global.html#volume">volume</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sun Mar 19 2017 15:31:34 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sun Mar 19 2017 16:07:15 GMT-0400 (EDT)
 </footer>
 
 <script> prettyPrint(); </script>

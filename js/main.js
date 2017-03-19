@@ -388,7 +388,7 @@ function updateCodeMirror(data){
 
 /**
  * Change playback speed of the selected videos.
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {float} newSpeed - New speed.
  */
 function speed(list, newSpeed) {
@@ -400,7 +400,7 @@ function speed(list, newSpeed) {
 
 /**
  * mute/unMute the selected videos.
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {bool} mute - true = mute / false = unMute.
  */
 function mute(list, mute) {
@@ -415,7 +415,7 @@ function mute(list, mute) {
 
 /**
  * Set volume of the selected videos.
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {integer} vol - New volume. (0 ~ 100)
  */
 function volume(list,vol) {
@@ -427,7 +427,7 @@ function volume(list,vol) {
 
 /**
  * Increase (or decrease) volume of the selected videos.
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {integer} diff - To decrease volume, pass negative number.
  */
 function turnup(list, diff) {
@@ -441,7 +441,7 @@ function turnup(list, diff) {
 
 /**
  * Replace the selected videos with id.
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {string} id - YouTube identifier.
  * @param {bool} cancelloop - To cancel the loop that may have been set earlier.
  */
@@ -475,7 +475,7 @@ function fadeInInner(video, diff) {
 
 /**
  * Start playing the selected videos with increasing volume.
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {integer} duration - Duration of time in seconds.
  */
 function fadeIn(list,duration) {
@@ -506,7 +506,7 @@ function fadeOutInner(video, diff) {
 
 /**
  * Fade out the volume of selected videos.
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {integer} duration - Duration of time in seconds.
  */
 function fadeOut(list,duration) {
@@ -570,7 +570,7 @@ function selectVideos(list){
 
 /**
  * Phase
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {integer} interval - interval
  */
 function phase(list,interval){ // interval and video id
@@ -601,7 +601,7 @@ function phase(list,interval){ // interval and video id
 
 /**
  * Delay
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {integer} interval - interval
  */
 function delay(list,interval){ // interval and video id
@@ -636,7 +636,7 @@ function delay(list,interval){ // interval and video id
 
 /**
  * Sync
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {integer} index - index
  */
 function sync(list, index){
@@ -645,7 +645,7 @@ function sync(list, index){
 
 /**
  * Pause the selected videos
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  */
 function pause(list){
   var selectedVideos =  selectVideos(list);
@@ -657,7 +657,7 @@ function pause(list){
 
 /**
  * Play the selected videos
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {string} quality - small, medium, large, hd720, hd1080, highres, or default.
  */
 function setQ(list, quality){
@@ -670,7 +670,7 @@ function setQ(list, quality){
 
 /**
  * Play the selected videos
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  */
 function play(list){
   var selectedVideos =  selectVideos(list);
@@ -681,7 +681,7 @@ function play(list){
 
 /**
  * Seek to specified time.
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {integer} seconds - time in seconds.
  */
 function seek(list, seconds){
@@ -693,7 +693,7 @@ function seek(list, seconds){
 
 /**
  * Loop
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {integer} back - back
  * @param {integer} interval - interval
  * @param {integer} phase - phase
@@ -738,7 +738,7 @@ function here(list){
 
 /**
  * LoopAt
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {integer} atTime - atTime
  * @param {integer} interval - interval
  * @param {integer} phase - phase
@@ -771,7 +771,7 @@ function loopAt(list,atTime,interval, phase){
 
 /**
  * Unloop
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  */
 function unloop(list){
   var selectedVideos =  selectVideos(list);
@@ -785,7 +785,7 @@ function unloop(list){
 
 /**
  * Jump
- * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {integer} num - num
  * @param {integer} phase - phase
  */
@@ -835,4 +835,16 @@ function help() {
   console.log(path);
   var win = window.open(path, '_blank');
   win.focus();
+}
+
+/**
+ * For the most of the methods below, you need to specify which videos to control.
+ * There are various ways to select videos.
+ * @param {integer} index - Single index of video
+ * @param {null|all} all - All the videos
+ * @param {integer[]} list - Indices of videos
+ * @param {not(indices)} not - All except indices. See [not()]{@link not}
+ * @param {string} expression - Condition text (e.g. ">3" or "%2==0")
+ */
+function _howToSelectVideos() {
 }
