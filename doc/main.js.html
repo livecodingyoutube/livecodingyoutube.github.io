@@ -26,7 +26,8 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>
+            <pre class="prettyprint source linenums"><code>var rand = Math.random;
+var iter = setInterval;
 var DEBUG = false;
 var markTimestamp = -1;
 var tag = document.createElement('script');
@@ -40,7 +41,6 @@ var row = 4;
 var col = 4;
 var cellWidth = 50;
 var cellHeight = 50;
-var numReadyVideo = 0;
 var targetVideos = [];
 var initialLoading = true;
 var youtubeid = "";
@@ -70,6 +70,7 @@ function onPlayerReady(event) {
     event.target.mute()
     event.target.seekTo(0);
   }
+  event.target.initialized = true;
   initialize();
 
 }
@@ -99,40 +100,88 @@ $(document).ready(function () {
         lineNumbers: false,
         styleActiveLine: true,
         matchBrackets: true,
-        height: 'auto'
+        height: 'auto',
+        mode:{name: "javascript", json: true}
     });
     // jquery ui
     $( "#resizable" ).resizable();
     $( "#resizable" ).draggable();
 
     var livecode = function(cm){
-      var code = cm.getDoc().getSelection();
+      var doc = cm.getDoc();
+      var code = doc.getSelection();
       if(code.length > 0){ // when there is any selected text
         if(DEBUG)console.log(code);
         try {
-            eval(code);
-        } catch (e) {
-            if (e instanceof SyntaxError) {
-                alert(e.message);
+            if(code.includes("setInterval")){
+              var sure;
+              if(code.substring(0,10)== "setInterval"){
+                sure = confirm("Are you sure you that want setInterval without a handle?");
+                if(!sure)return;
+              }
+              if(!code.includes("clearInterval")){
+                var sure = confirm("Are you sure? This does not have clearInterval. ");
+                if(!sure) return;
+              }
             }
+            eval(code);
+            _.defer(function(){
+              var start = doc.getCursor("anchor");
+              var end = doc.getCursor("head");
+              if(start.line > end.line || (start.line == end.line &amp;&amp; start.ch > end.ch)){
+                var temp = start;
+                start = end;
+                end = temp;
+              }
+              var obj = doc.markText(start,end,{className:"ex-high"});
+              setTimeout(function(){
+                _.defer(function(){
+                  obj.clear();
+                });
+              },100);
+            });
+
+        } catch (e) {
+            alert(e.message);
             console.error(e);
         }
       }else{ // when there is no selectino, evaluate the line where the cursor is
-        code = cm.getDoc().getLine(cm.getDoc().getCursor().line);
+        code = doc.getLine(cm.getDoc().getCursor().line);
         if(DEBUG)console.log(code);
         try {
             eval(code);
+            _.defer(function(){
+              var start = doc.getCursor();
+              var obj = doc.markText({line:start.line, ch:0},{line:start.line, ch:code.length},{className:"ex-high"});
+              setTimeout(function(){
+                _.defer(function(){
+                  obj.clear();
+                });
+              },100);
+            });
         } catch (e) {
-            if (e instanceof SyntaxError) {
-                alert(e.message);
-            }
+            alert(e.message);
             console.error(e);
         }
       }
     };
+
     var map = {"Shift-Enter": livecode};
+    var showHelp = function(cm){
+      var code = cm.getDoc().getSelection();
+      if (code.length &lt;= 0){ // when there is any selected text
+        code = cm.getDoc().getLine(cm.getDoc().getCursor().line);
+      }
+      var index = code.indexOf('(');
+      var fName = code.substring(0, index);
+      console.log(fName);
+      help(fName);
+    };
 
-
+    var map = {
+      "Shift-Enter": livecode,
+      "Alt-Enter": showHelp
+    };
     editor.addKeyMap(map);
 
 	$("#youtube-result").hide();
@@ -140,17 +189,24 @@ $(document).ready(function () {
   $(window).keydown(function(e){
       if (e.ctrlKey){
         $("#code-container").toggle();
+        $(".go-back-editor").toggle();
       }
+  });
+
+
+  $(".go-back-button").click(function(){
+    $("#code-container").toggle();
+    $(".go-back-editor").toggle();
   });
 });
 
 /**
- * Add grid
+ * Add columns and rows to the grid
  * @param {integer} addRow - number of rows to add.
  * @param {integer} addCol - number of columns to add.
  * @param {string} id - YouTube identifier.
  */
-function addGrid(addRow,addCol,id){
+function add(addRow,addCol,id){
   initialLoading = true;
 
   var row = gridVideos.length + addRow;
@@ -181,7 +237,7 @@ function addGrid(addRow,addCol,id){
   var divcolhtml = '&lt;div class = "'+divcolclass+'">&lt;/div>'
   // let's add the videos
   cellWidth = $(document).width() / col;
-  cellHeight = $(document).height() / col;
+  cellHeight = $(document).height() / row;
 
   // let's resize the existing divs in gridstack.
   for (var i=0; i &lt; gridVideos.length; i++){
@@ -190,6 +246,12 @@ function addGrid(addRow,addCol,id){
     for (var j=0; j&lt; gridVideos[0].length; j++){
       $(gridVideos[i][j].getIframe()).removeClass().addClass(divcolclass);
       gridVideos[i][j].setSize(cellWidth,cellHeight);
+    /*  var stateDV = $("#state-div-"+ i +"-"+ j);
+      stateDV.removeClass();
+      stateDV.addClass(divrowclass);
+
+      $("#state-div-"+ i +"-"+ j).width(cellWidth);
+      $("#state-div-"+ i +"-"+ j).height(cellHeight);*/
     }
   }
 
@@ -229,12 +291,12 @@ function addGrid(addRow,addCol,id){
 }
 
 /**
- * Create grid
+ * Create a grid
  * @param {integer} row - number of rows to create.
  * @param {integer} col - number of columns to create.
  * @param {string} id - YouTube identifier.
  */
-function createGrid(row,col,id){
+function create(row,col,id){
   youtubeid = id;
   initialLoading = true;
   divRowGrid  = [];
@@ -242,7 +304,6 @@ function createGrid(row,col,id){
   unloop();
   $("#youtubegrid").empty();
   $("#youtubegrid-state").empty();
-  numReadyVideo = 0;
   targetVideos = [];
   if(12%row!=0 || 12%col!=0){
     alert("we can only take a divisor of 12.");
@@ -268,11 +329,13 @@ function createGrid(row,col,id){
       divRowGrid[i] = ddiv;
       if(DEBUG){
         dcol_state.addClass("div_state");
+        dcol_state.attr("id","state-div-"+ i +"-"+ j);
         var spanElem = $(spanhtml);
         spanElem.attr("id","state-cell-"+ i +"-"+ j);
         spanElem.appendTo(dcol_state);
+        dcol_state.appendTo(ddiv_state);
       }
-      dcol_state.appendTo(ddiv_state);
+
     }
     $("#youtubegrid").append(ddiv);
     if(DEBUG)$("#youtubegrid-state").append(ddiv_state);
@@ -304,7 +367,7 @@ function addVideo(i,j){
 var searchResult = [];
 
 /**
- * Search YouTube 
+ * Search YouTube. Selecto item on the right of the screen to get the YouTube identifier text.
  * @param {string} query - Query to search.
  */
 function search(query) {
@@ -316,7 +379,10 @@ function search(query) {
 		part: 'snippet',
 		key: 'AIzaSyDAKDaBy_JDwcScSHqDQimOOLjdPImLanc', // github gist에서 본 api_token 이라서 새로 하나 받아야 할 것 같아요.
 		q: query,
-		type: "video"
+		type: "video",
+    maxResults: 20,
+    videoEmbeddable	:"true",
+    videoLicense:"youtube"
 	};
 
 	$.getJSON(url, params, function (query) {
@@ -333,7 +399,7 @@ function search(query) {
 
         // $("#youtube-result").append(entry.snippet.title + ",&lt;span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">" + entry.id.videoId + "&lt;/span>&lt;br>")
       $("#yt-r-" +entry.id.videoId).click(function(){
-        updateCodeMirror(entry.id.videoId);
+        updateCodeMirror("\"" + entry.id.videoId + "\"");
       });
 		});
 	});
@@ -343,37 +409,14 @@ function updateCodeMirror(data){
     var doc = $('.CodeMirror')[0].CodeMirror.getDoc();
     doc.replaceSelection(data); // adds a new line
     $("#youtube-result").hide();
+    $('.CodeMirror')[0].CodeMirror.focus();
+
 }
 
-
-// methods to control playback
-// scheme: func (indexes, param)
-// e.g.
-// seek(all, 44) // seek 44s of all videos
-// seek(0,44) // seek 44s of the video 0
-// seek([0,3],44) // seek 44s of the video 0 and 3
-
-function playbackControl(indices, func) {
-    var selectedVideos = []
-    if (indices.length > 1) {
-        for(var i=1; i&lt; indices.length; i++){
-            var index = indices[i];
-            selectedVideos.push(targetVideos[index]);
-        }
-    } else if (indices.length == 1) {
-        selectedVideos = targetVideos
-    }
-
-    var param = indices[0];
-
-    for (var i=0; i&lt;selectedVideos.length; i++) {
-        func(selectedVideos[i], param)
-    }
-}
 
 /**
  * Change playback speed of the selected videos.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {float} newSpeed - New speed.
  */
 function speed(list, newSpeed) {
@@ -385,7 +428,7 @@ function speed(list, newSpeed) {
 
 /**
  * mute/unMute the selected videos.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {bool} mute - true = mute / false = unMute.
  */
 function mute(list, mute) {
@@ -400,7 +443,7 @@ function mute(list, mute) {
 
 /**
  * Set volume of the selected videos.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} vol - New volume. (0 ~ 100)
  */
 function volume(list,vol) {
@@ -412,7 +455,7 @@ function volume(list,vol) {
 
 /**
  * Increase (or decrease) volume of the selected videos.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} diff - To decrease volume, pass negative number.
  */
 function turnup(list, diff) {
@@ -422,21 +465,28 @@ function turnup(list, diff) {
     video.setVolume(newVolume)
   });
 }
+//function alternate(list, )
 
 /**
  * Replace the selected videos with id.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {string} id - YouTube identifier.
  * @param {bool} cancelloop - To cancel the loop that may have been set earlier.
  */
-function replaceVideo(list, id, cancelloop) {
+ function cue(list, id, cancelloop) {
+   if(!cancelloop) cancelloop = true;
   var selectedVideos =  selectVideos(list);
   selectedVideos.forEach(function(video){
     video.cueVideoById(id)
+    video.initialized = true;
+    video.mute();
     video.playVideo();
+    video.setPlaybackRate(1);
+    event.target.initialized = true;
     if(video.loopHandle &amp;&amp; cancelloop){
       clearInterval(video.loopHandle);
     }
+    if(video.here)video.here = null;
   });
 }
 
@@ -453,7 +503,7 @@ function fadeInInner(video, diff) {
 
 /**
  * Start playing the selected videos with increasing volume.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} duration - Duration of time in seconds.
  */
 function fadeIn(list,duration) {
@@ -484,7 +534,7 @@ function fadeOutInner(video, diff) {
 
 /**
  * Fade out the volume of selected videos.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} duration - Duration of time in seconds.
  */
 function fadeOut(list,duration) {
@@ -496,9 +546,39 @@ function fadeOut(list,duration) {
     });
 }
 
+/**
+ * Returns an array of video index that excludes the specified video index.
+ * e.g. if the current grid is 3X3.
+ * not(1) returns [0,2,3,4,5,6,7,8]
+ * e.g. if the current grid is 4X4.
+ * not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
+ * @param {integer[]} indices - Indices to exclude.
+ */
+ function not() {
+ 	var list = [...Array(targetVideos.length).keys()];
+ 	for (var i = 0; i &lt; arguments.length; i++) {
+ 		target = arguments[i];
+ 		index = list.indexOf(target);
+ 		if (index > -1) {
+ 			list.splice(index, 1);
+ 		}
+ 	}
+ 	return list;
+ }
+
 function selectVideos(list){
   var selectedVideos = []
-  if (list === parseInt(list, 10) ){
+
+  if (typeof(list) == "string") {
+  	var condition = list;
+  	var selectedVideos = [];
+	for (var i = 0; i &lt; targetVideos.length; i++) {
+   		if (eval(i + condition))
+   			selectedVideos.push(targetVideos[i]);
+	}
+	return selectedVideos;
+  }
+  else if (list === parseInt(list, 10) ){
       selectedVideos.push(targetVideos[list])
   }
   else if (list == null) {
@@ -518,10 +598,41 @@ function selectVideos(list){
 
 /**
  * Phase
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} interval - interval
  */
 function phase(list,interval){ // interval and video id
+
+  var selectedVideos =  selectVideos(list);
+  if(interval>=0){
+    for (var i=1; i&lt;selectedVideos.length; i++){
+      (function(vindex){
+        if(DEBUG)console.log("vindex",vindex);
+          setTimeout(function(){
+          selectedVideos[vindex].seekTo(selectedVideos[vindex].getCurrentTime()- vindex*interval);
+        },vindex*interval* 1000);
+      })(i)
+    }
+    return ;
+  }
+ // interval &lt; 0
+  for (var i=selectedVideos.length-2; i>=0; i--){
+    (function(vindex){
+        if(DEBUG)console.log("vindex",vindex);
+        setTimeout(function(){
+          selectedVideos[vindex].seekTo(selectedVideos[vindex].getCurrentTime()- (selectedVideos.length - vindex-1)*-interval);
+        },(selectedVideos.length - vindex-1)*-interval* 1000);
+    })(i)
+  }
+
+}
+
+/**
+ * Delay
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
+ * @param {integer} interval - interval
+ */
+function delay(list,interval){ // interval and video id
 
   var selectedVideos =  selectVideos(list);
   if(interval>=0){
@@ -542,6 +653,8 @@ function phase(list,interval){ // interval and video id
         if(DEBUG)console.log("vindex",vindex);
         setTimeout(function(){
           selectedVideos[vindex].playVideo();
+
+
         },(selectedVideos.length - vindex-1)*-interval* 1000);
     })(i)
     selectedVideos[i].pauseVideo();
@@ -551,7 +664,7 @@ function phase(list,interval){ // interval and video id
 
 /**
  * Sync
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} index - index
  */
 function sync(list, index){
@@ -560,7 +673,7 @@ function sync(list, index){
 
 /**
  * Pause the selected videos
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  */
 function pause(list){
   var selectedVideos =  selectVideos(list);
@@ -572,7 +685,7 @@ function pause(list){
 
 /**
  * Play the selected videos
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {string} quality - small, medium, large, hd720, hd1080, highres, or default.
  */
 function setQ(list, quality){
@@ -585,7 +698,7 @@ function setQ(list, quality){
 
 /**
  * Play the selected videos
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  */
 function play(list){
   var selectedVideos =  selectVideos(list);
@@ -596,7 +709,7 @@ function play(list){
 
 /**
  * Seek to specified time.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} seconds - time in seconds.
  */
 function seek(list, seconds){
@@ -608,7 +721,7 @@ function seek(list, seconds){
 
 /**
  * Loop
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} back - back
  * @param {integer} interval - interval
  * @param {integer} phase - phase
@@ -638,10 +751,22 @@ function loop(list,back,interval, phase){
     },(interval + index * phase)* 1000);
   });
 }
+function here(list){
+  var selectedVideos =  selectVideos(list);
+  selectedVideos.forEach(function(video, index){
+    if(!video.here){
+      video.here = video.getCurrentTime();
+      return;
+    }
+    // this is problematic
+    loopAt(list,video.here,video.getCurrentTime() - video.here);
+    video.here = null;
+  });
+}
 
 /**
  * LoopAt
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} atTime - atTime
  * @param {integer} interval - interval
  * @param {integer} phase - phase
@@ -674,7 +799,7 @@ function loopAt(list,atTime,interval, phase){
 
 /**
  * Unloop
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  */
 function unloop(list){
   var selectedVideos =  selectVideos(list);
@@ -688,7 +813,7 @@ function unloop(list){
 
 /**
  * Jump
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} num - num
  * @param {integer} phase - phase
  */
@@ -696,13 +821,13 @@ function jump(list,num,phase){
   var selectedVideos =  selectVideos(list);
   if(phase){
     selectedVideos.forEach(function(video){
-        video.seekTo(video.getCurrenttime() + num,true);
+        video.seekTo(video.getCurrentTime() + num,true);
     });
   }
   else{
     selectedVideos.forEach(function(video, index){
       setTimeout(function(){
-        video.seekTo(video.getCurrenttime() + num,true);
+        video.seekTo(video.getCurrentTime() + num,true);
       }, phase * index * 1000)
     });
   }
@@ -714,14 +839,11 @@ function onPlayerStateChange(event) {
   if(DEBUG&amp;&amp;event.data == YTSTATE_PLAYING){
     console.log("now - jumpTimestamp:", (now - jumpTimestamp));
   }
-  if(initialLoading &amp;&amp; event.data == YTSTATE_PLAYING){
-    numReadyVideo++;
+  if(event.target.initialized &amp;&amp; event.data == YTSTATE_PLAYING){
+    event.target.initialized = false;
     event.target.pauseVideo();
     event.target.seekTo(0);
     event.target.unMute()
-  //  addVideo(numReadyVideo);
-  }
-  if(numReadyVideo == numLoadingVideo){
     initialLoading = false;
     targetVideos = [];
     for(var i = 0; i &lt; gridVideos.length; i++)
@@ -729,6 +851,18 @@ function onPlayerStateChange(event) {
       targetVideos = targetVideos.concat(gridVideos[i]);
     }
   }
+
+}
+
+function help() {
+  var path = '/doc/global.html'
+  if (arguments.length == 1) {
+    var fName = arguments[0];
+    path += '#' + fName;
+  }
+  console.log(path);
+  var win = window.open(path, '_blank');
+  win.focus();
 }
 </code></pre>
         </article>
@@ -740,13 +874,13 @@ function onPlayerStateChange(event) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addGrid">addGrid</a></li><li><a href="global.html#createGrid">createGrid</a></li><li><a href="global.html#fadeIn">fadeIn</a></li><li><a href="global.html#fadeOut">fadeOut</a></li><li><a href="global.html#jump">jump</a></li><li><a href="global.html#loop">loop</a></li><li><a href="global.html#loopAt">loopAt</a></li><li><a href="global.html#mute">mute</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#phase">phase</a></li><li><a href="global.html#play">play</a></li><li><a href="global.html#replaceVideo">replaceVideo</a></li><li><a href="global.html#search">search</a></li><li><a href="global.html#seek">seek</a></li><li><a href="global.html#setQ">setQ</a></li><li><a href="global.html#speed">speed</a></li><li><a href="global.html#sync">sync</a></li><li><a href="global.html#turnup">turnup</a></li><li><a href="global.html#unloop">unloop</a></li><li><a href="global.html#volume">volume</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#add">add</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#cue">cue</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fadeIn">fadeIn</a></li><li><a href="global.html#fadeOut">fadeOut</a></li><li><a href="global.html#jump">jump</a></li><li><a href="global.html#loop">loop</a></li><li><a href="global.html#loopAt">loopAt</a></li><li><a href="global.html#mute">mute</a></li><li><a href="global.html#not">not</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#phase">phase</a></li><li><a href="global.html#play">play</a></li><li><a href="global.html#search">search</a></li><li><a href="global.html#seek">seek</a></li><li><a href="global.html#setQ">setQ</a></li><li><a href="global.html#speed">speed</a></li><li><a href="global.html#sync">sync</a></li><li><a href="global.html#turnup">turnup</a></li><li><a href="global.html#unloop">unloop</a></li><li><a href="global.html#volume">volume</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon Feb 06 2017 20:44:53 GMT-0500 (EST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sun Mar 19 2017 15:31:34 GMT-0400 (EDT)
 </footer>
 
 <script> prettyPrint(); </script>

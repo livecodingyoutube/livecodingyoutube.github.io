@@ -101,14 +101,14 @@
 
     
 
-    <h4 class="name" id="addGrid"><span class="type-signature"></span>addGrid<span class="signature">(addRow, addCol, id)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(addRow, addCol, id)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Add grid
+    Add columns and rows to the grid
 </div>
 
 
@@ -247,7 +247,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line125">line 125</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line181">line 181</a>
     </li></ul></dd>
     
 
@@ -278,14 +278,14 @@
 
     
 
-    <h4 class="name" id="createGrid"><span class="type-signature"></span>createGrid<span class="signature">(row, col, id)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="create"><span class="type-signature"></span>create<span class="signature">(row, col, id)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Create grid
+    Create a grid
 </div>
 
 
@@ -424,7 +424,350 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line209">line 209</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line271">line 271</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="cue"><span class="type-signature"></span>cue<span class="signature">(list, id, cancelloop)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Replace the selected videos with id.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>list</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;integer></span>
+|
+
+<span class="param-type">string</span>
+|
+
+<span class="param-type">all</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">YouTube identifier.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cancelloop</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">To cancel the loop that may have been set earlier.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line448">line 448</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="delay"><span class="type-signature"></span>delay<span class="signature">(list, interval)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Delay
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>list</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;integer></span>
+|
+
+<span class="param-type">string</span>
+|
+
+<span class="param-type">all</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>interval</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">interval</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line607">line 607</a>
     </li></ul></dd>
     
 
@@ -507,6 +850,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -517,7 +863,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -581,7 +927,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line431">line 431</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line481">line 481</a>
     </li></ul></dd>
     
 
@@ -664,6 +1010,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -674,7 +1023,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -738,7 +1087,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line462">line 462</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line512">line 512</a>
     </li></ul></dd>
     
 
@@ -821,6 +1170,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -831,7 +1183,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -918,7 +1270,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line667">line 667</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line792">line 792</a>
     </li></ul></dd>
     
 
@@ -1001,6 +1353,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -1011,7 +1366,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -1121,7 +1476,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line588">line 588</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line701">line 701</a>
     </li></ul></dd>
     
 
@@ -1204,6 +1559,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -1214,7 +1572,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -1324,7 +1682,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line621">line 621</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line746">line 746</a>
     </li></ul></dd>
     
 
@@ -1407,6 +1765,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -1417,7 +1778,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -1481,7 +1842,142 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line363">line 363</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line406">line 406</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="not"><span class="type-signature"></span>not<span class="signature">(indices)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Returns an array of video index that excludes the specified video index.
+e.g. if the current grid is 3X3.
+not(1) returns [0,2,3,4,5,6,7,8]
+e.g. if the current grid is 4X4.
+not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>indices</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;integer></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Indices to exclude.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line529">line 529</a>
     </li></ul></dd>
     
 
@@ -1564,6 +2060,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -1574,7 +2073,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -1615,7 +2114,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line537">line 537</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line650">line 650</a>
     </li></ul></dd>
     
 
@@ -1698,6 +2197,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -1708,7 +2210,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -1772,7 +2274,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line496">line 496</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line576">line 576</a>
     </li></ul></dd>
     
 
@@ -1855,138 +2357,7 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
-<span class="param-type">all</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Indices of videos, or keyword "all".</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line562">line 562</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="replaceVideo"><span class="type-signature"></span>replaceVideo<span class="signature">(list, id, cancelloop)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Replace the selected videos with id.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>list</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;integer></span>
+<span class="param-type">string</span>
 |
 
 <span class="param-type">all</span>
@@ -1999,53 +2370,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">YouTube identifier.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cancelloop</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">To cancel the loop that may have been set earlier.</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -2086,7 +2411,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line404">line 404</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line675">line 675</a>
     </li></ul></dd>
     
 
@@ -2124,7 +2449,7 @@
 
 
 <div class="description">
-    Search YouTube
+    Search YouTube. Selecto item on the right of the screen to get the YouTube identifier text.
 </div>
 
 
@@ -2217,7 +2542,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line282">line 282</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line345">line 345</a>
     </li></ul></dd>
     
 
@@ -2300,6 +2625,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -2310,7 +2638,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -2374,7 +2702,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line574">line 574</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line687">line 687</a>
     </li></ul></dd>
     
 
@@ -2457,6 +2785,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -2467,7 +2798,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -2531,7 +2862,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line550">line 550</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line663">line 663</a>
     </li></ul></dd>
     
 
@@ -2614,6 +2945,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -2624,7 +2958,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -2688,7 +3022,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line351">line 351</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line394">line 394</a>
     </li></ul></dd>
     
 
@@ -2771,6 +3105,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -2781,7 +3118,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -2845,7 +3182,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line529">line 529</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line642">line 642</a>
     </li></ul></dd>
     
 
@@ -2928,6 +3265,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -2938,7 +3278,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -3002,7 +3342,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line390">line 390</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line433">line 433</a>
     </li></ul></dd>
     
 
@@ -3085,6 +3425,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -3095,7 +3438,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -3136,7 +3479,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line651">line 651</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line776">line 776</a>
     </li></ul></dd>
     
 
@@ -3219,6 +3562,9 @@
 <span class="param-type">Array.&lt;integer></span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">all</span>
 
 
@@ -3229,7 +3575,7 @@
 
             
 
-            <td class="description last">Indices of videos, or keyword "all".</td>
+            <td class="description last">Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".</td>
         </tr>
 
     
@@ -3293,7 +3639,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line378">line 378</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line421">line 421</a>
     </li></ul></dd>
     
 
@@ -3335,13 +3681,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addGrid">addGrid</a></li><li><a href="global.html#createGrid">createGrid</a></li><li><a href="global.html#fadeIn">fadeIn</a></li><li><a href="global.html#fadeOut">fadeOut</a></li><li><a href="global.html#jump">jump</a></li><li><a href="global.html#loop">loop</a></li><li><a href="global.html#loopAt">loopAt</a></li><li><a href="global.html#mute">mute</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#phase">phase</a></li><li><a href="global.html#play">play</a></li><li><a href="global.html#replaceVideo">replaceVideo</a></li><li><a href="global.html#search">search</a></li><li><a href="global.html#seek">seek</a></li><li><a href="global.html#setQ">setQ</a></li><li><a href="global.html#speed">speed</a></li><li><a href="global.html#sync">sync</a></li><li><a href="global.html#turnup">turnup</a></li><li><a href="global.html#unloop">unloop</a></li><li><a href="global.html#volume">volume</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#add">add</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#cue">cue</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fadeIn">fadeIn</a></li><li><a href="global.html#fadeOut">fadeOut</a></li><li><a href="global.html#jump">jump</a></li><li><a href="global.html#loop">loop</a></li><li><a href="global.html#loopAt">loopAt</a></li><li><a href="global.html#mute">mute</a></li><li><a href="global.html#not">not</a></li><li><a href="global.html#pause">pause</a></li><li><a href="global.html#phase">phase</a></li><li><a href="global.html#play">play</a></li><li><a href="global.html#search">search</a></li><li><a href="global.html#seek">seek</a></li><li><a href="global.html#setQ">setQ</a></li><li><a href="global.html#speed">speed</a></li><li><a href="global.html#sync">sync</a></li><li><a href="global.html#turnup">turnup</a></li><li><a href="global.html#unloop">unloop</a></li><li><a href="global.html#volume">volume</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon Feb 06 2017 20:44:53 GMT-0500 (EST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sun Mar 19 2017 15:31:34 GMT-0400 (EDT)
 </footer>
 
 <script> prettyPrint(); </script>

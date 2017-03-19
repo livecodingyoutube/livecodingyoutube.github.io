@@ -339,7 +339,7 @@ function addVideo(i,j){
 var searchResult = [];
 
 /**
- * Search YouTube
+ * Search YouTube. Selecto item on the right of the screen to get the YouTube identifier text.
  * @param {string} query - Query to search.
  */
 function search(query) {
@@ -388,7 +388,7 @@ function updateCodeMirror(data){
 
 /**
  * Change playback speed of the selected videos.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {float} newSpeed - New speed.
  */
 function speed(list, newSpeed) {
@@ -400,7 +400,7 @@ function speed(list, newSpeed) {
 
 /**
  * mute/unMute the selected videos.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {bool} mute - true = mute / false = unMute.
  */
 function mute(list, mute) {
@@ -415,7 +415,7 @@ function mute(list, mute) {
 
 /**
  * Set volume of the selected videos.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} vol - New volume. (0 ~ 100)
  */
 function volume(list,vol) {
@@ -427,7 +427,7 @@ function volume(list,vol) {
 
 /**
  * Increase (or decrease) volume of the selected videos.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} diff - To decrease volume, pass negative number.
  */
 function turnup(list, diff) {
@@ -441,7 +441,7 @@ function turnup(list, diff) {
 
 /**
  * Replace the selected videos with id.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {string} id - YouTube identifier.
  * @param {bool} cancelloop - To cancel the loop that may have been set earlier.
  */
@@ -475,7 +475,7 @@ function fadeInInner(video, diff) {
 
 /**
  * Start playing the selected videos with increasing volume.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} duration - Duration of time in seconds.
  */
 function fadeIn(list,duration) {
@@ -506,7 +506,7 @@ function fadeOutInner(video, diff) {
 
 /**
  * Fade out the volume of selected videos.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} duration - Duration of time in seconds.
  */
 function fadeOut(list,duration) {
@@ -520,11 +520,11 @@ function fadeOut(list,duration) {
 
 /**
  * Returns an array of video index that excludes the specified video index.
- * @param {integer []} indices
-e.g. if the current grid is 3X3.
-not(1) returns [0,2,3,4,5,6,7,8]
-e.g. if the current grid is 4X4.
-not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
+ * e.g. if the current grid is 3X3.
+ * not(1) returns [0,2,3,4,5,6,7,8]
+ * e.g. if the current grid is 4X4.
+ * not(8,7) returns [0,1,2,3,4,5,6,9,10,11,12,13,14,15]
+ * @param {integer[]} indices - Indices to exclude.
  */
  function not() {
  	var list = [...Array(targetVideos.length).keys()];
@@ -570,7 +570,7 @@ function selectVideos(list){
 
 /**
  * Phase
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} interval - interval
  */
 function phase(list,interval){ // interval and video id
@@ -601,7 +601,7 @@ function phase(list,interval){ // interval and video id
 
 /**
  * Delay
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} interval - interval
  */
 function delay(list,interval){ // interval and video id
@@ -636,7 +636,7 @@ function delay(list,interval){ // interval and video id
 
 /**
  * Sync
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} index - index
  */
 function sync(list, index){
@@ -645,7 +645,7 @@ function sync(list, index){
 
 /**
  * Pause the selected videos
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  */
 function pause(list){
   var selectedVideos =  selectVideos(list);
@@ -657,7 +657,7 @@ function pause(list){
 
 /**
  * Play the selected videos
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {string} quality - small, medium, large, hd720, hd1080, highres, or default.
  */
 function setQ(list, quality){
@@ -670,7 +670,7 @@ function setQ(list, quality){
 
 /**
  * Play the selected videos
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  */
 function play(list){
   var selectedVideos =  selectVideos(list);
@@ -681,7 +681,7 @@ function play(list){
 
 /**
  * Seek to specified time.
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} seconds - time in seconds.
  */
 function seek(list, seconds){
@@ -693,7 +693,7 @@ function seek(list, seconds){
 
 /**
  * Loop
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} back - back
  * @param {integer} interval - interval
  * @param {integer} phase - phase
@@ -738,7 +738,7 @@ function here(list){
 
 /**
  * LoopAt
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} atTime - atTime
  * @param {integer} interval - interval
  * @param {integer} phase - phase
@@ -771,7 +771,7 @@ function loopAt(list,atTime,interval, phase){
 
 /**
  * Unloop
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  */
 function unloop(list){
   var selectedVideos =  selectVideos(list);
@@ -785,7 +785,7 @@ function unloop(list){
 
 /**
  * Jump
- * @param {integer[]|all} list - Indices of videos, or keyword "all".
+ * @param {integer[]|string|all} list - Indices of videos, condition text (e.g. ">3" or "%2==0"), or keyword "all".
  * @param {integer} num - num
  * @param {integer} phase - phase
  */
