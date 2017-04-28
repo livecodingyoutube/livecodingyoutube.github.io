@@ -16,7 +16,8 @@ border-1px{
   padding: 3px;
   text-align: left;
 }
-#youtube-result{
+
+.youtube-result{
   width: 20%;
   top: 0px;
   bottom: 0px;

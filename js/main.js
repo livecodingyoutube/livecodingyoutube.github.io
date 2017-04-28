@@ -156,7 +156,7 @@ $(document).ready(function () {
     };
     editor.addKeyMap(map);
 
-	$("#youtube-result").hide();
+	$(".youtube-result").hide();
 
   $(window).keydown(function(e){
       if (e.ctrlKey){
@@ -170,6 +170,10 @@ $(document).ready(function () {
     $("#code-container").toggle();
     $(".go-back-editor").toggle();
   });
+
+  $(".search-result-close-button").click(function(){
+    $(".youtube-result").toggle();
+  })
 });
 
 /**
@@ -343,8 +347,8 @@ var searchResult = [];
  * @param {string} query - Query to search.
  */
 function search(query) {
-	$("#youtube-result").show();
-	$('#youtube-result').empty();
+	$(".youtube-result").show();
+	$('.youtube-result-list').empty();
 
 	url = 'https://www.googleapis.com/youtube/v3/search';
 	var params = {
@@ -367,9 +371,8 @@ function search(query) {
 			thumburl =  entry.snippet.thumbnails.default.url;
 			thumbimg = '<img class="thumb-img" src="'+thumburl+'">';
 
-			$('#youtube-result').append('<div class = "thumb" id="yt-r-' +entry.id.videoId+ '" yt-id="' +entry.id.videoId+ '"><div>' + thumbimg +'</div><div class = "thumb-title" >'+ title + '</div>');
+			$('.youtube-result-list').append('<div class = "thumb" id="yt-r-' +entry.id.videoId+ '" yt-id="' +entry.id.videoId+ '"><div>' + thumbimg +'</div><div class = "thumb-title" >'+ title + '</div>');
 
-        // $("#youtube-result").append(entry.snippet.title + ",<span id=yt-r-" +entry.id.videoId+ " yt-id=" +entry.id.videoId+ ">" + entry.id.videoId + "</span><br>")
       $("#yt-r-" +entry.id.videoId).click(function(){
         updateCodeMirror("\"" + entry.id.videoId + "\"");
       });
@@ -380,7 +383,7 @@ function search(query) {
 function updateCodeMirror(data){
     var doc = $('.CodeMirror')[0].CodeMirror.getDoc();
     doc.replaceSelection(data); // adds a new line
-    $("#youtube-result").hide();
+    $(".youtube-result").hide();
     $('.CodeMirror')[0].CodeMirror.focus();
 
 }
