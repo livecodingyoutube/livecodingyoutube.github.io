@@ -17,6 +17,7 @@ var targetVideos = [];
 var initialLoading = true;
 var youtubeid = "";
 var gridVideos = [];
+var clickedVideos = [];
 
 var YTSTATE_UNSTARTED = -1;
 var YTSTATE_ENDED = 0;
@@ -34,6 +35,8 @@ function onPlayerReady(event) {
   var j = parseInt(event.target.getIframe().getAttribute("col"))
   if(!gridVideos[i]) gridVideos[i] = [];
   gridVideos[i][j] = event.target;
+  event.target.lcy_i = i;
+  event.target.lcy_j = j;
   function initialize(){
     if(event.target.mute == undefined){
       setTimeout(initialize,10);
@@ -64,6 +67,17 @@ function parseYTState(num){
 
 function setMark(){
   markTimestamp = (new Date()).getTime();
+}
+
+function gridSelected(i,j){
+  console.log("selected(" + i+ "," + j + ")");
+  $("#state-div-"+ i +"-"+ j).toggleClass("div_selected");
+  clickedVideos[i * gridVideos[0].length + j] = !clickedVideos[i * gridVideos[0].length + j];
+  console.log("clickedVideos:" + clickedVideos);
+}
+
+function indexToIJ(index){
+  return [Math.floor(index /gridVideos.length), index % gridVideos.length];
 }
 
 // run the function when the document is ready
@@ -158,17 +172,55 @@ $(document).ready(function () {
 
 	$(".youtube-result").hide();
 
-  $(window).keydown(function(e){
-      if (e.ctrlKey){
-        $("#code-container").toggle();
-        $(".go-back-editor").toggle();
+  $(window).keydown(function(ev){
+    var keycode = ev.which;
+      if (keycode == 93){ // need to get
+        $(".div_selected").removeClass("div_selected");
+
+        if($(".go-back-editor").is(':visible') ){
+          $("#code-container").show();
+          $(".go-back-editor").hide();
+          $("#youtubegrid-state").show();
+        }else{
+          $("#code-container").hide();
+          $(".go-back-editor").show();
+          $("#youtubegrid-state").hide();
+        }
+        clickedVideos = [];
+
+      }else if (keycode==27){
+        var list =[];
+        $(".div_selected").removeClass("div_selected");
+        if($("#code-container").is(':visible') ){
+          $("#code-container").hide();
+          $(".go-back-editor").hide();
+        }else{
+          $("#code-container").show();
+          $(".go-back-editor").hide();
+        }
+
+        if(clickedVideos.length>0){
+          for (var i=0; i < clickedVideos.length; i++){
+            if (clickedVideos[i]){
+              list.push(i);
+            }
+          }
+          if(list.length == 1){
+            updateCodeMirror(JSON.stringify(list[0]));
+          }else if (list.length >1){
+            updateCodeMirror(JSON.stringify(list));
+          }
+        }
+
+        clickedVideos = [];
+
       }
   });
-
 
   $(".go-back-button").click(function(){
     $("#code-container").toggle();
     $(".go-back-editor").toggle();
+    $("#youtubegrid-state").show();
   });
 
   $(".search-result-close-button").click(function(){
@@ -187,9 +239,13 @@ function add(addRow,addCol,id){
 
   var row = gridVideos.length + addRow;
   var col = addCol;
+
   if(gridVideos[0])
     col +=  gridVideos[0].length;
-
+  if(12%row!=0 || 12%col!=0){
+    alert("we can only take a divisor of 12.");
+    return;
+  }
   if(id)
     youtubeid = id;
 
@@ -201,58 +257,62 @@ function add(addRow,addCol,id){
   var rowHeight = 12/row;
   var colWidth = 12/col;
 
-  if(12%row!=0 || 12%col!=0){
-    alert("we can only take a divisor of 12.");
-    return;
-  }
-
   var divrowclass = 'row-xs-'+rowHeight;
-  var divcolclass = 'yt-cell col-sm-'+colWidth+' col-md-'+colWidth+' col-lg-'+colWidth+' col-xs-'+colWidth;
+  var divcolclass = 'col-sm-'+colWidth+' col-md-'+colWidth+' col-lg-'+colWidth+' col-xs-'+colWidth;
 
-  var divrowhtml = '<div class='+divrowclass+'">'
+  var divrowhtml = '<div class="'+divrowclass+'">'
   var divcolhtml = '<div class = "'+divcolclass+'"></div>'
+  var spanhtml = '<span class = "player_state">state</span>'
+
   // let's add the videos
   cellWidth = $(document).width() / col;
   cellHeight = $(document).height() / row;
 
   // let's resize the existing divs in gridstack.
   for (var i=0; i < gridVideos.length; i++){
-    divRowGrid[i].removeClass();
-    divRowGrid[i].addClass(divrowclass);
+    $(".row-"+i).removeClass().addClass(divrowclass).addClass("row-"+i);
+    $(".row-state-"+i).removeClass().addClass(divrowclass).addClass("row-state-"+i);
     for (var j=0; j< gridVideos[0].length; j++){
       $(gridVideos[i][j].getIframe()).removeClass().addClass(divcolclass);
       gridVideos[i][j].setSize(cellWidth,cellHeight);
-    /*  var stateDV = $("#state-div-"+ i +"-"+ j);
-      stateDV.removeClass();
-      stateDV.addClass(divrowclass);
-
-      $("#state-div-"+ i +"-"+ j).width(cellWidth);
-      $("#state-div-"+ i +"-"+ j).height(cellHeight);*/
+      $("#state-div-"+ i +"-"+ j).removeClass()
+      .addClass(divcolclass)
+      .addClass("div_state");
     }
   }
-
 
   // add cols first
   for (var i=0; i <gridVideos.length; i++){
     if(!gridVideos[0])
       gridVideos = [];
+    var ddiv_state = $(".row-state-" + i);
     for (var j= gridVideos[0].length; j< col; j++){
       numLoadingVideo++;
       var dcol = $(divcolhtml);
       dcol.attr("id","cell-"+ i +"-"+ j);
       dcol.attr("row",i);
       dcol.attr("col",j);
-      divRowGrid[i].append(dcol)
+      $(".row-"+i).append(dcol);
+      var dcol_state = $(divcolhtml);
+      dcol_state.addClass("div_state").attr("id","state-div-"+ i +"-"+ j);
+      dcol_state.addClass("div_state").attr("onclick","gridSelected(" + i+ "," + j + ")");
+      dcol_state.appendTo(ddiv_state);
+
+      if(DEBUG){
+        $(spanhtml).attr("id","state-cell-"+ i +"-"+ j).appendTo(dcol_state);
+      }
       if(id)addVideo(i,j);
     }
   }
 
-  // add rows first
+  // and then add rows
   for (var i=gridVideos.length; i <row; i++){
-    var ddiv = $(divrowhtml);
+    var ddiv = $(divrowhtml).addClass("row-" + i);
     var ddiv_state = $(divrowhtml);
-    $("#youtubegrid").append(ddiv);
+    ddiv_state.addClass("row-state-" + i);
 
+    $("#youtubegrid").append(ddiv);
+    $("#youtubegrid-state").append(ddiv_state);
     for (var j= 0; j< col; j++){
       numLoadingVideo++;
       var dcol = $(divcolhtml);
@@ -260,9 +320,13 @@ function add(addRow,addCol,id){
       dcol.attr("row",i);
       dcol.attr("col",j);
       ddiv.append(dcol)
+      var dcol_state = $(divcolhtml).addClass("div_state").attr("id","state-div-"+ i +"-"+ j).appendTo(ddiv_state).attr("onclick","gridSelected(" + i+ "," + j + ")");
+
+      if(DEBUG){
+        $(spanhtml).attr("id","state-cell-"+ i +"-"+ j).appendTo(dcol_state);
+      }
       if(id)addVideo(i,j);
     }
-    divRowGrid[i] = ddiv;
   }
 }
 
@@ -273,49 +337,47 @@ function add(addRow,addCol,id){
  * @param {string} id - YouTube identifier.
  */
 function create(row,col,id){
+  if(12%row!=0 || 12%col!=0){
+    alert("we can only take a divisor of 12.");
+    return
+  }
   youtubeid = id;
   initialLoading = true;
-  divRowGrid  = [];
   gridVideos = [];
   unloop();
   $("#youtubegrid").empty();
   $("#youtubegrid-state").empty();
   targetVideos = [];
-  if(12%row!=0 || 12%col!=0){
-    alert("we can only take a divisor of 12.");
-    return
-  }
+
   numLoadingVideo = row * col;
 
   var rowHeight = 12/row;
   var colWidth = 12/col;
   var divrowhtml = '<div class="row-xs-'+rowHeight+'">'
-  var divcolhtml = '<div class = "yt-cell col-sm-'+colWidth+' col-md-'+colWidth+' col-lg-'+colWidth+' col-xs-'+colWidth+'"></div>'
+  var divcolhtml = '<div class = "col-sm-'+colWidth+' col-md-'+colWidth+' col-lg-'+colWidth+' col-xs-'+colWidth+'"></div>'
   var spanhtml = '<span class = "player_state">state</span>'
   for (var i=0; i<row; i++){
     var ddiv = $(divrowhtml);
+    ddiv.addClass("row-"+i);
     var ddiv_state = $(divrowhtml);
+    ddiv_state.addClass("row-state-"+i);
     for  (var j=0; j<col; j++){
       var dcol = $(divcolhtml);
-      var dcol_state = $(divcolhtml);
       dcol.appendTo(ddiv);
       dcol.attr("id","cell-"+ i +"-"+ j);
       dcol.attr("row",i);
       dcol.attr("col",j);
-      divRowGrid[i] = ddiv;
-      if(DEBUG){
+        var dcol_state = $(divcolhtml);
         dcol_state.addClass("div_state");
-        dcol_state.attr("id","state-div-"+ i +"-"+ j);
-        var spanElem = $(spanhtml);
-        spanElem.attr("id","state-cell-"+ i +"-"+ j);
-        spanElem.appendTo(dcol_state);
-        dcol_state.appendTo(ddiv_state);
+        dcol_state.attr("id","state-div-"+ i +"-"+ j).attr("onclick","gridSelected(" + i+ "," + j + ")");
+;
+      if(DEBUG){
+        $(spanhtml).attr("id","state-cell-"+ i +"-"+ j).appendTo(dcol_state);
       }
-
+      dcol_state.appendTo(ddiv_state);
     }
     $("#youtubegrid").append(ddiv);
-    if(DEBUG)$("#youtubegrid-state").append(ddiv_state);
-    if(!DEBUG) $("#youtubegrid-state").remove();
+    $("#youtubegrid-state").append(ddiv_state);
   }
 
   cellHeight = ddiv.height();
@@ -364,8 +426,8 @@ function search(query) {
 	$.getJSON(url, params, function (query) {
 		searchResult = query.items
 		searchResult.forEach(function(entry) {
-		  if(DEBUG)console.log(entry.snippet.title); // 화면에 출력해보려고 했는데, codemirror에 output은 어떻게 하는지 잘 모르겠네요.
-	    console.log(entry.snippet.title); // 화면에 출력해보려고 했는데, codemirror에 output은 어떻게 하는지 잘 모르겠네요.
+		  if(DEBUG)console.log(entry.snippet.title);
+	    console.log(entry.snippet.title);
 
 			title = entry.snippet.title;
 			thumburl =  entry.snippet.thumbnails.default.url;
@@ -424,8 +486,15 @@ function mute(list, mute) {
 function volume(list,vol) {
   var selectedVideos =  selectVideos(list);
   selectedVideos.forEach(function(video){
-    video.setVolume(vol);
+    //video.setVolume(vol);
+    adjustVolume(video, vol);
   });
+}
+
+function adjustVolume(video, vol){
+  video.setVolume(vol);
+  var opacity = 1 - vol/100;
+  $("#state-div-"+ video.lcy_i +"-"+ video.lcy_j).css("opacity", opacity);
 }
 
 /**
@@ -437,7 +506,8 @@ function turnup(list, diff) {
   var selectedVideos =  selectVideos(list);
   selectedVideos.forEach(function(video){
     var newVolume = video.getVolume() + diff
-    video.setVolume(newVolume)
+    //video.setVolume(newVolume)
+    adjustVolume(video, newVolume);
   });
 }
 //function alternate(list, )
@@ -457,6 +527,7 @@ function turnup(list, diff) {
     video.mute();
     video.playVideo();
     video.setPlaybackRate(1);
+    adjustVolume(video, 100);
     event.target.initialized = true;
     if(video.loopHandle && cancelloop){
       clearInterval(video.loopHandle);
@@ -466,14 +537,19 @@ function turnup(list, diff) {
 }
 
 function fadeInInner(video, diff) {
+    video.lcy_fading = true;
+
     var currentVolume = video.getVolume();
     // console.log("cur: " + currentVolume + "/ diff: "+diff);
     if (currentVolume < 100) {
-        video.setVolume(currentVolume + diff);
+        //video.setVolume(currentVolume + diff);
+        adjustVolume(video,currentVolume + diff );
         return setTimeout((function() {
             return fadeInInner(video, diff);
         }), 100);
     }
+    video.lcy_fading = false;
+
 }
 
 /**
@@ -485,26 +561,38 @@ function fadeIn(list,duration) {
     if(!duration) duration = 5;
     var diff = 10.0 / duration;
     var selectedVideos =  selectVideos(list);
-    selectedVideos.forEach(function(v){
+    /*selectedVideos.forEach(function(v){
       v.setVolume(0);
-      if(v.getPlayerState() != YTSTATE_PLAYING)
-        v.playVideo();
     });
-
+*/
+    var fadeInCall = function(v){
+      if(!v.lcy_fading){
+        fadeInInner(v, diff);
+      }else{
+        setTimeout(function(){
+          fadeInCall(v);
+        },100);
+      }
+    };
+    selectedVideos.forEach(fadeInCall);
+    /*
     selectedVideos.forEach(function(v){
       fadeInInner(v, diff);
     });
-
+*/
 }
 
 function fadeOutInner(video, diff) {
+    video.lcy_fading = true;
     var currentVolume = video.getVolume();
     if (currentVolume > 0) {
-        video.setVolume(currentVolume - diff);
+        //video.setVolume(currentVolume - diff);
+        adjustVolume(video, currentVolume - diff);
         return setTimeout((function() {
             return fadeOutInner(video, diff);
         }), 100);
     }
+    video.lcy_fading = false;
 }
 
 /**
@@ -516,9 +604,16 @@ function fadeOut(list,duration) {
     if(!duration) duration = 5;
     var diff = 10.0 / duration;
     var selectedVideos =  selectVideos(list);
-    selectedVideos.forEach(function(v){
-      fadeOutInner(v, diff);
-    });
+    var fadeOutCall = function(v){
+      if(!v.lcy_fading){
+        fadeOutInner(v, diff);
+      }else{
+        setTimeout(function(){
+          fadeOutCall(v);
+        },100);
+      }
+    };
+    selectedVideos.forEach(fadeOutCall);
 }
 
 /**
@@ -567,6 +662,7 @@ function selectVideos(list){
   }
   else{
     alert("ERROR: edge case found", list);
+    return null;
   }
   return selectedVideos;
 }
@@ -814,19 +910,20 @@ function onPlayerStateChange(event) {
   if(DEBUG&&event.data == YTSTATE_PLAYING){
     console.log("now - jumpTimestamp:", (now - jumpTimestamp));
   }
-  if(event.target.initialized && event.data == YTSTATE_PLAYING){
-    event.target.initialized = false;
-    event.target.pauseVideo();
-    event.target.seekTo(0);
-    event.target.unMute()
-    initialLoading = false;
+  if(event.target.initialized){
     targetVideos = [];
     for(var i = 0; i < gridVideos.length; i++)
     {
       targetVideos = targetVideos.concat(gridVideos[i]);
     }
+    if( event.data == YTSTATE_PLAYING){
+      event.target.initialized = false;
+      event.target.pauseVideo();
+      event.target.seekTo(0);
+      event.target.unMute()
+      initialLoading = false;
+    }
   }
-
 }
 
 function help() {
