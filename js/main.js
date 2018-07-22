@@ -923,6 +923,11 @@ function onPlayerStateChange(event) {
       event.target.unMute()
       initialLoading = false;
     }
+    
+    if( event.data == YTSTATE_ENDED){
+      event.target.seekTo(0);
+      event.target.playVideo();
+    }
   }
 }
 
