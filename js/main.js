@@ -924,10 +924,11 @@ function onPlayerStateChange(event) {
       initialLoading = false;
     }
     
-    if( event.data == YTSTATE_ENDED){
-      event.target.seekTo(0);
+  
+  }
+  if( event.data == YTSTATE_ENDED){
+     event.target.seekTo(0);
       event.target.playVideo();
-    }
   }
 }
 
