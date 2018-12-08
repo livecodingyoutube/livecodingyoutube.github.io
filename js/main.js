@@ -1,5 +1,7 @@
 var rand = Math.random;
 var iter = setInterval;
+var overallQuality = 'small';
+var playbakQualityStrings = ['small','medium','large','hd720','hd1080','highres']
 var DEBUG = false;
 var markTimestamp = -1;
 var tag = document.createElement('script');
@@ -33,6 +35,8 @@ function onYouTubeIframeAPIReady() {
 function onPlayerReady(event) {
   var i = parseInt(event.target.getIframe().getAttribute("row"))
   var j = parseInt(event.target.getIframe().getAttribute("col"))
+  event.target.setPlaybackQuality(overallQuality);
+
   if(!gridVideos[i]) gridVideos[i] = [];
   gridVideos[i][j] = event.target;
   event.target.lcy_i = i;
@@ -48,6 +52,17 @@ function onPlayerReady(event) {
   event.target.initialized = true;
   initialize();
 
+}
+
+function onPlayerPlaybackQualityChange(event) {
+    var playbackQuality = event.target.getPlaybackQuality();
+
+    if( playbackQuality != overallQuality) {
+        console.log("Quality changed to: " + playbackQuality );
+        var currentTime = event.target.getCurrentTime();
+        event.target.setPlaybackQuality( overallQuality );
+//        event.target.seekTo(currentTime, false);
+    }
 }
 
 // 5. The API calls this function when the player's state changes.
@@ -174,7 +189,7 @@ $(document).ready(function () {
 
   $(window).keydown(function(ev){
     var keycode = ev.which;
-      if (keycode == 93){ // need to get
+      if (keycode == 93 || keycode == 18){ // need to get
         $(".div_selected").removeClass("div_selected");
 
         if($(".go-back-editor").is(':visible') ){
@@ -397,9 +412,10 @@ function addVideo(i,j){
      videoId: youtubeid,
      events: {
        'onReady': onPlayerReady,
-       'onStateChange': onPlayerStateChange
+       'onStateChange': onPlayerStateChange,
+       'onPlaybackQualityChange':onPlayerPlaybackQualityChange,
      },
-     suggestedQuality:"small"
+     suggestedQuality:overallQuality
   });
 }
 var searchResult = [];
@@ -755,16 +771,38 @@ function pause(list){
 }
 
 /**
- * Play the selected videos
+ * Set the quality of videos (any video that is retrieved after this code runs will be set with the specified quality
  * @param {select} videos - See [how to select videos]{@link _howToSelectVideos}.
  * @param {string} quality - small, medium, large, hd720, hd1080, highres, or default.
  */
 function setQ(list, quality){
-  var selectedVideos =  selectVideos(list);
-
-  selectedVideos.forEach(function(video){
+  if(playbakQualityStrings.includes(quality))
+  {
+    //overallQuality = quality;
+    var selectedVideos =  selectVideos(list);
+    selectedVideos.forEach(function(video){
       video.setPlaybackQuality(quality);
-  });
+    });
+  }
+  else{
+    alert(quality + ' is not a possible value.')
+  }
+
+}
+
+/**
+ * Set the quality of videos (any video that is retrieved after this code runs will be set with the specified quality
+ * @param {string} quality - small, medium, large, hd720, hd1080, highres, or default.
+ */
+function setQoverall(quality){
+  if(playbakQualityStrings.includes(quality))
+  {
+    overallQuality = quality;
+  }
+  else{
+    alert(quality + ' is not a possible value.')
+  }
+
 }
 
 /**
@@ -905,6 +943,7 @@ function jump(list,num,phase){
 }
 
 function onPlayerStateChange(event) {
+
   var now = (new Date()).getTime();
   if(DEBUG)$("#state-" + event.target.h.id).text(parseYTState(event.data));
   if(DEBUG&&event.data == YTSTATE_PLAYING){
@@ -921,10 +960,12 @@ function onPlayerStateChange(event) {
       event.target.pauseVideo();
       event.target.seekTo(0);
       event.target.unMute()
+        event.target.setPlaybackQuality(overallQuality);
+
       initialLoading = false;
     }
-    
-  
+
+
   }
   if( event.data == YTSTATE_ENDED){
      event.target.seekTo(0);
