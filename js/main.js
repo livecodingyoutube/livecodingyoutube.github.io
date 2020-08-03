@@ -431,7 +431,8 @@ function search(query) {
 	url = 'https://www.googleapis.com/youtube/v3/search';
 	var params = {
 		part: 'snippet',
-		key: 'AIzaSyDAKDaBy_JDwcScSHqDQimOOLjdPImLanc', // github gist에서 본 api_token 이라서 새로 하나 받아야 할 것 같아요.
+//		key: 'AIzaSyDAKDaBy_JDwcScSHqDQimOOLjdPImLanc', // github gist에서 본 api_token 이라서 새로 하나 받아야 할 것 같아요.
+		key: 'AIzaSyCOBqbpI5_-ePjfJ91Tbr1ElADByO57gEQ',
 		q: query,
 		type: "video",
     maxResults: 20,
